@@ -4,35 +4,220 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CAMERA PARTOUT</title>
+
   <style>
-    html, body { margin: 0; min-height: 100%; }
-    body { font-family: Arial, sans-serif; background: #f4f6f8; }
-    .loader { min-height: 100vh; display: grid; place-items: center; color: #222; }
-    .loader p { margin: 0; padding: 24px; text-align: center; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(
+        135deg,
+        #0057B8 0%,
+        #FFD700 33%,
+        #CE1126 66%,
+        #009739 100%
+      );
+    }
+
+    .loader {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      color: white;
+    }
+
+    .loader p {
+      margin: 0;
+      padding: 24px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 15px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    /* SHARE BUTTONS */
+    .share-box {
+      position: fixed;
+      bottom: 20px;
+      right: 15px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .share-btn {
+      border: none;
+      border-radius: 30px;
+      padding: 12px 18px;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,.25);
+      transition: transform .2s, opacity .2s;
+    }
+
+    .share-btn:hover {
+      transform: scale(1.05);
+      opacity: .9;
+    }
+
+    .share-main {
+      background: #0057B8;
+    }
+
+    .whatsapp {
+      background: #25D366;
+    }
+
+    .facebook {
+      background: #1877F2;
+    }
+
+    @media (max-width: 600px) {
+      .share-box {
+        right: 10px;
+        bottom: 10px;
+      }
+
+      .share-btn {
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <div class="loader" id="loader"><p>Loading CAMERA PARTOUT…</p></div>
+
+  <div class="loader" id="loader">
+    <p>Loading CAMERA PARTOUT…</p>
+  </div>
+
   <script>
-    // Camera-Partout is kept as the original source file. Load it as HTML so
-    // GitHub Pages can render the app even though the source has no .html suffix.
     fetch('./Camera-Partout', { cache: 'no-store' })
       .then(function (response) {
-        if (!response.ok) throw new Error('Unable to load Camera-Partout (' + response.status + ')');
+
+        if (!response.ok) {
+          throw new Error(
+            'Unable to load Camera-Partout (' + response.status + ')'
+          );
+        }
+
         return response.text();
       })
+
       .then(function (html) {
+
         document.open();
         document.write(html);
         document.close();
+
+        /*
+         * Add the sharing buttons after CAMERA PARTOUT loads.
+         */
+        setTimeout(function () {
+
+          if (document.querySelector('.share-box')) return;
+
+          const shareBox = document.createElement('div');
+          shareBox.className = 'share-box';
+
+          shareBox.innerHTML = `
+            <button class="share-btn share-main" onclick="sharePage()">
+              ↗ Partager
+            </button>
+
+            <button class="share-btn whatsapp" onclick="shareWhatsApp()">
+              WhatsApp
+            </button>
+
+            <button class="share-btn facebook" onclick="shareFacebook()">
+              Facebook
+            </button>
+          `;
+
+          document.body.appendChild(shareBox);
+
+        }, 500);
       })
+
       .catch(function (error) {
+
         document.getElementById('loader').innerHTML =
           '<p>Unable to load the app. Please refresh the page.<br><small>' +
           error.message.replace(/[&<>"']/g, function (character) {
-            return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character];
-          }) + '</small></p>';
+            return ({
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#39;'
+            })[character];
+          }) +
+          '</small></p>';
       });
+
+
+    /* GENERAL SHARE */
+    function sharePage() {
+
+      const shareData = {
+        title: document.title || 'CAMERA PARTOUT',
+        text: 'Découvrez cette actualité sur CAMERA PARTOUT',
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+
+        navigator.share(shareData).catch(function () {});
+
+      } else {
+
+        navigator.clipboard.writeText(window.location.href)
+          .then(function () {
+            alert('Lien copié. Vous pouvez maintenant le partager.');
+          })
+          .catch(function () {
+            alert('Copiez ce lien : ' + window.location.href);
+          });
+      }
+    }
+
+
+    /* WHATSAPP */
+    function shareWhatsApp() {
+
+      const text =
+        'Découvrez cette actualité sur CAMERA PARTOUT : ' +
+        window.location.href;
+
+      const url =
+        'https://wa.me/?text=' + encodeURIComponent(text);
+
+      window.open(url, '_blank');
+    }
+
+
+    /* FACEBOOK */
+    function shareFacebook() {
+
+      const url =
+        'https://www.facebook.com/sharer/sharer.php?u=' +
+        encodeURIComponent(window.location.href);
+
+      window.open(
+        url,
+        '_blank',
+        'width=600,height=500'
+      );
+    }
   </script>
+
 </body>
 </html>
