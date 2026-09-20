@@ -6,877 +6,214 @@
 
 <title>CAMERA PARTOUT</title>
 
+<meta property="og:title" content="CAMERA PARTOUT">
+<meta property="og:description" content="L'information partout, à tout moment.">
+<meta property="og:type" content="website">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-html{
-  scroll-behavior:smooth;
-}
-
-body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f4f6f8;
-  color:#111;
-  line-height:1.6;
-}
-
-button,
-input,
-textarea,
-select{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-img{
-  max-width:100%;
-  display:block;
-}
-
-/* ================= HEADER ================= */
-
-header{
-  background:#111;
-  color:white;
-  padding:14px 20px;
-  position:sticky;
-  top:0;
-  z-index:1000;
-  box-shadow:0 2px 10px rgba(0,0,0,.25);
-}
-
-.header-inner{
-  max-width:1200px;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-}
-
-.logo{
-  font-size:25px;
-  font-weight:900;
-  letter-spacing:1px;
-  white-space:nowrap;
-}
-
-.logo span{
-  color:#e50914;
-}
-
-.header-live{
-  background:#e50914;
-  color:white;
-  border:0;
-  padding:10px 16px;
-  border-radius:7px;
-  font-weight:bold;
-}
-
-.header-live:hover{
-  background:#b90710;
-}
-
-/* ================= NAV ================= */
-
-nav{
-  background:white;
-  border-bottom:1px solid #ddd;
-  position:sticky;
-  top:69px;
-  z-index:999;
-}
-
-.nav-inner{
-  max-width:1200px;
-  margin:auto;
-  display:flex;
-  overflow-x:auto;
-}
-
-.nav-inner button{
-  background:none;
-  border:0;
-  padding:14px 15px;
-  font-weight:bold;
-  color:#222;
-  white-space:nowrap;
-}
-
-.nav-inner button:hover,
-.nav-inner button.active{
-  color:#e50914;
-}
-
-/* ================= ADMIN BAR ================= */
-
-#adminBar{
-  display:none;
-  background:#222;
-  color:white;
-  padding:8px 15px;
-}
-
-.admin-inner{
-  max-width:1200px;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.admin-inner button{
-  border:0;
-  border-radius:5px;
-  padding:7px 12px;
-  background:#e50914;
-  color:white;
-}
-
-/* ================= GENERAL ================= */
-
-.container{
-  width:min(1200px,94%);
-  margin:auto;
-}
-
-.page{
-  display:none;
-}
-
-.page.active{
-  display:block;
-}
-
-.hero{
-  background:linear-gradient(135deg,#111,#333);
-  color:white;
-  padding:55px 20px;
-  text-align:center;
-}
-
-.hero h1{
-  font-size:42px;
-  margin-bottom:10px;
-}
-
-.hero h1 span{
-  color:#e50914;
-}
-
-.hero p{
-  font-size:18px;
-  opacity:.9;
-}
-
-.section{
-  margin:35px 0;
-}
-
-.section-title{
-  border-left:5px solid #e50914;
-  padding-left:12px;
-  margin-bottom:20px;
-  font-size:27px;
-}
-
-/* ================= SEARCH ================= */
-
-.search-box{
-  margin:30px 0;
-}
-
-.search-box input{
-  width:100%;
-  padding:15px;
-  border:1px solid #ccc;
-  border-radius:8px;
-  outline:none;
-  font-size:16px;
-}
-
-.search-box input:focus{
-  border-color:#e50914;
-}
-
-/* ================= YOUTUBE LIVE ================= */
-
-.youtube-live{
-  background:#111;
-  color:white;
-  border-radius:12px;
-  padding:20px;
-  margin:30px 0;
-  box-shadow:0 5px 20px rgba(0,0,0,.2);
-}
-
-.youtube-live h2{
-  text-align:center;
-  margin-bottom:10px;
-}
-
-.live-title{
-  text-align:center;
-  color:#ff3333;
-  font-weight:bold;
-  margin-bottom:15px;
-}
-
-.live-dot{
-  width:10px;
-  height:10px;
-  background:red;
-  border-radius:50%;
-  display:inline-block;
-  margin-right:5px;
-  animation:pulse 1s infinite;
-}
-
-@keyframes pulse{
-  0%{opacity:1}
-  50%{opacity:.3}
-  100%{opacity:1}
-}
-
-.youtube-player{
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  overflow:hidden;
-  border-radius:10px;
-  background:#000;
-}
-
-.youtube-player iframe{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  border:0;
-}
-
-.youtube-info{
-  text-align:center;
-  margin-top:12px;
-  color:#ccc;
-  font-size:14px;
-}
-
-/* ================= NEWS GRID ================= */
-
-.news-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:20px;
-}
-
-.news-card{
-  background:white;
-  border-radius:10px;
-  overflow:hidden;
-  box-shadow:0 3px 12px rgba(0,0,0,.1);
-  transition:.2s;
-}
-
-.news-card:hover{
-  transform:translateY(-3px);
-}
-
-.news-card img{
-  width:100%;
-  height:210px;
-  object-fit:cover;
-  background:#ddd;
-}
-
-.news-card-content{
-  padding:15px;
-}
-
-.news-category{
-  display:inline-block;
-  background:#e50914;
-  color:white;
-  font-size:12px;
-  font-weight:bold;
-  padding:4px 8px;
-  border-radius:4px;
-  margin-bottom:8px;
-}
-
-.news-card h3{
-  font-size:20px;
-  margin-bottom:8px;
-}
-
-.news-card p{
-  color:#555;
-  font-size:14px;
-}
-
-.news-date{
-  font-size:12px;
-  color:#888;
-  margin-top:10px;
-}
-
-.read-button{
-  margin-top:12px;
-  background:#111;
-  color:white;
-  border:0;
-  padding:9px 13px;
-  border-radius:5px;
-}
-
-/* ================= SUBSCRIBE ================= */
-
-.subscribe-box{
-  background:#e50914;
-  color:white;
-  border-radius:10px;
-  padding:30px;
-  text-align:center;
-  margin:35px 0;
-}
-
-.subscribe-box h2{
-  margin-bottom:8px;
-}
-
-.subscribe-form{
-  max-width:600px;
-  margin:20px auto 0;
-  display:flex;
-  gap:8px;
-}
-
-.subscribe-form input{
-  flex:1;
-  padding:13px;
-  border:0;
-  border-radius:6px;
-}
-
-.subscribe-form button{
-  border:0;
-  background:#111;
-  color:white;
-  padding:13px 20px;
-  border-radius:6px;
-  font-weight:bold;
-}
-
-.message{
-  margin-top:10px;
-  font-weight:bold;
-}
-
-/* ================= ARTICLE ================= */
-
-.article{
-  background:white;
-  margin:30px auto;
-  padding:25px;
-  border-radius:10px;
-  box-shadow:0 3px 15px rgba(0,0,0,.1);
-  max-width:900px;
-}
-
-.article img{
-  width:100%;
-  max-height:500px;
-  object-fit:cover;
-  border-radius:8px;
-  margin:20px 0;
-}
-
-.article h1{
-  font-size:36px;
-  line-height:1.2;
-}
-
-.article-meta{
-  color:#777;
-  margin:10px 0 20px;
-}
-
-.article-content{
-  white-space:pre-wrap;
-  font-size:18px;
-}
-
-.article-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:25px;
-}
-
-.article-actions button{
-  border:0;
-  padding:10px 15px;
-  border-radius:6px;
-  color:white;
-  background:#111;
-}
-
-.article-actions .like{
-  background:#e50914;
-}
-
-.article-actions .whatsapp{
-  background:#25d366;
-}
-
-.article-actions .facebook{
-  background:#1877f2;
-}
-
-.back-button{
-  background:#111;
-  color:white;
-  border:0;
-  padding:10px 15px;
-  border-radius:6px;
-  margin-bottom:20px;
-}
-
-/* ================= FORMS ================= */
-
-.form-card{
-  background:white;
-  padding:25px;
-  border-radius:10px;
-  box-shadow:0 3px 15px rgba(0,0,0,.1);
-  max-width:900px;
-  margin:30px auto;
-}
-
-.form-group{
-  margin-bottom:16px;
-}
-
-.form-group label{
-  display:block;
-  font-weight:bold;
-  margin-bottom:6px;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select{
-  width:100%;
-  padding:12px;
-  border:1px solid #ccc;
-  border-radius:6px;
-}
-
-.form-group textarea{
-  min-height:180px;
-  resize:vertical;
-}
-
-.primary-button{
-  background:#e50914;
-  color:white;
-  border:0;
-  padding:12px 20px;
-  border-radius:6px;
-  font-weight:bold;
-}
-
-.secondary-button{
-  background:#111;
-  color:white;
-  border:0;
-  padding:12px 20px;
-  border-radius:6px;
-}
-
-.preview-image{
-  max-width:300px;
-  margin:10px 0;
-  border-radius:8px;
-}
-
-/* ================= ADMIN ================= */
-
-.admin-menu{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:15px;
-  margin-bottom:20px;
-}
-
-.admin-menu button{
-  padding:15px;
-  border:0;
-  background:#111;
-  color:white;
-  border-radius:7px;
-}
-
-.admin-menu button:hover{
-  background:#e50914;
-}
-
-/* ================= ANALYTICS ================= */
-
-.stats-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
-  margin-bottom:25px;
-}
-
-.stat-card{
-  background:white;
-  padding:20px;
-  border-radius:8px;
-  text-align:center;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-
-.stat-card strong{
-  display:block;
-  font-size:30px;
-  color:#e50914;
-}
-
-.chart{
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  overflow-x:auto;
-}
-
-.chart-bars{
-  min-width:650px;
-  height:260px;
-  display:flex;
-  align-items:end;
-  gap:8px;
-  padding:20px 5px 5px;
-  border-bottom:1px solid #ccc;
-}
-
-.bar-wrap{
-  flex:1;
-  height:100%;
-  display:flex;
-  flex-direction:column;
-  justify-content:end;
-  align-items:center;
-  gap:5px;
-}
-
-.bar{
-  width:100%;
-  max-width:35px;
-  background:#e50914;
-  border-radius:4px 4px 0 0;
-  min-height:2px;
-}
-
-.bar-label{
-  font-size:10px;
-  color:#666;
-}
-
-/* ================= FOOTER ================= */
-
-footer{
-  background:#111;
-  color:white;
-  margin-top:50px;
-  padding:35px 20px;
-}
-
-.footer-inner{
-  max-width:1200px;
-  margin:auto;
-  text-align:center;
-}
-
-.footer-logo{
-  font-size:25px;
-  font-weight:bold;
-}
-
-.footer-logo span{
-  color:#e50914;
-}
-
-.footer-links{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:15px;
-  margin:15px 0;
-}
-
-.footer-links button{
-  background:none;
-  border:0;
-  color:#ccc;
-}
-
-.footer-copy{
-  color:#888;
-  font-size:13px;
-}
-
-/* ================= NOTICE ================= */
-
-#notice{
-  position:fixed;
-  right:20px;
-  bottom:20px;
-  background:#111;
-  color:white;
-  padding:14px 18px;
-  border-radius:7px;
-  display:none;
-  z-index:5000;
-  max-width:350px;
-  box-shadow:0 4px 15px rgba(0,0,0,.3);
-}
-
-/* ================= LOADING ================= */
-
-.loading{
-  text-align:center;
-  padding:30px;
-  color:#777;
-}
-
-/* ================= MOBILE ================= */
-
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;color:#111;line-height:1.6}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+img{max-width:100%;display:block}
+
+/* HEADER */
+header{background:#111;color:#fff;padding:14px 20px;position:sticky;top:0;z-index:1000;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.header-inner{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.logo{font-size:25px;font-weight:900;letter-spacing:1px;white-space:nowrap}
+.logo span{color:#e50914}
+.header-live{background:#e50914;color:#fff;border:0;padding:10px 16px;border-radius:7px;font-weight:bold}
+.header-live:hover{background:#b90710}
+
+/* NAV */
+nav{background:#fff;border-bottom:1px solid #ddd;position:sticky;top:69px;z-index:999}
+.nav-inner{max-width:1200px;margin:auto;display:flex;overflow-x:auto}
+.nav-inner button{background:none;border:0;padding:14px 15px;font-weight:bold;color:#222;white-space:nowrap}
+.nav-inner button:hover,.nav-inner button.active{color:#e50914}
+
+/* ADMIN BAR */
+#adminBar{display:none;background:#222;color:#fff;padding:8px 15px}
+.admin-inner{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.admin-inner button{border:0;border-radius:5px;padding:7px 12px;background:#e50914;color:#fff}
+
+/* GENERAL */
+.container{width:min(1200px,94%);margin:auto}
+.page{display:none}
+.page.active{display:block}
+.hero{background:linear-gradient(135deg,#111,#333);color:#fff;padding:55px 20px;text-align:center}
+.hero h1{font-size:42px;margin-bottom:10px}
+.hero h1 span{color:#e50914}
+.hero p{font-size:18px;opacity:.9}
+.section{margin:35px 0}
+.section-title{border-left:5px solid #e50914;padding-left:12px;margin-bottom:20px;font-size:27px}
+
+/* SEARCH */
+.search-box{margin:30px 0}
+.search-box input{width:100%;padding:15px;border:1px solid #ccc;border-radius:8px;outline:none;font-size:16px}
+.search-box input:focus{border-color:#e50914}
+
+/* YOUTUBE */
+.youtube-live{background:#111;color:#fff;border-radius:12px;padding:20px;margin:30px 0;box-shadow:0 5px 20px rgba(0,0,0,.2)}
+.youtube-live h2{text-align:center;margin-bottom:10px}
+.live-title{text-align:center;color:#ff3333;font-weight:bold;margin-bottom:15px}
+.live-dot{width:10px;height:10px;background:red;border-radius:50%;display:inline-block;margin-right:5px;animation:pulse 1s infinite}
+@keyframes pulse{0%{opacity:1}50%{opacity:.3}100%{opacity:1}}
+.youtube-player{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:10px;background:#000}
+.youtube-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.youtube-info{text-align:center;margin-top:12px;color:#ccc;font-size:14px}
+
+/* NEWS */
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.news-card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,.1);transition:.2s}
+.news-card:hover{transform:translateY(-3px)}
+.news-card img{width:100%;height:210px;object-fit:cover;background:#ddd}
+.news-card-content{padding:15px}
+.news-category{display:inline-block;background:#e50914;color:#fff;font-size:12px;font-weight:bold;padding:4px 8px;border-radius:4px;margin-bottom:8px}
+.news-card h3{font-size:20px;margin-bottom:8px}
+.news-card p{color:#555;font-size:14px}
+.news-date{font-size:12px;color:#888;margin-top:10px}
+.read-button{margin-top:12px;background:#111;color:#fff;border:0;padding:9px 13px;border-radius:5px}
+
+/* SUBSCRIBE */
+.subscribe-box{background:#e50914;color:#fff;border-radius:10px;padding:30px;text-align:center;margin:35px 0}
+.subscribe-box h2{margin-bottom:8px}
+.subscribe-form{max-width:600px;margin:20px auto 0;display:flex;gap:8px}
+.subscribe-form input{flex:1;padding:13px;border:0;border-radius:6px}
+.subscribe-form button{border:0;background:#111;color:#fff;padding:13px 20px;border-radius:6px;font-weight:bold}
+.message{margin-top:10px;font-weight:bold}
+
+/* ARTICLE */
+.article{background:#fff;margin:30px auto;padding:25px;border-radius:10px;box-shadow:0 3px 15px rgba(0,0,0,.1);max-width:900px}
+.article img{width:100%;max-height:500px;object-fit:cover;border-radius:8px;margin:20px 0}
+.article h1{font-size:36px;line-height:1.2}
+.article-meta{color:#777;margin:10px 0 20px}
+.article-content{white-space:pre-wrap;font-size:18px}
+.article-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:25px}
+.article-actions button{border:0;padding:10px 15px;border-radius:6px;color:#fff;background:#111}
+.article-actions .like{background:#e50914}
+.article-actions .whatsapp{background:#25d366}
+.article-actions .facebook{background:#1877f2}
+.article-actions .danger{background:#900}
+.back-button{background:#111;color:#fff;border:0;padding:10px 15px;border-radius:6px;margin-bottom:20px}
+
+/* FORMS */
+.form-card{background:#fff;padding:25px;border-radius:10px;box-shadow:0 3px 15px rgba(0,0,0,.1);max-width:900px;margin:30px auto}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-weight:bold;margin-bottom:6px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:12px;border:1px solid #ccc;border-radius:6px}
+.form-group textarea{min-height:180px;resize:vertical}
+.primary-button{background:#e50914;color:#fff;border:0;padding:12px 20px;border-radius:6px;font-weight:bold}
+.secondary-button{background:#111;color:#fff;border:0;padding:12px 20px;border-radius:6px}
+.preview-image{max-width:300px;margin:10px 0;border-radius:8px}
+
+/* ADMIN */
+.admin-menu{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:20px}
+.admin-menu button{padding:15px;border:0;background:#111;color:#fff;border-radius:7px}
+.admin-menu button:hover{background:#e50914}
+
+/* ANALYTICS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:25px}
+.stat-card{background:#fff;padding:20px;border-radius:8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.stat-card strong{display:block;font-size:30px;color:#e50914}
+.chart{background:#fff;padding:20px;border-radius:10px;overflow-x:auto}
+.chart-bars{min-width:650px;height:260px;display:flex;align-items:end;gap:8px;padding:20px 5px 5px;border-bottom:1px solid #ccc}
+.bar-wrap{flex:1;height:100%;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:5px}
+.bar{width:100%;max-width:35px;background:#e50914;border-radius:4px 4px 0 0;min-height:2px}
+.bar-label{font-size:10px;color:#666}
+
+/* FOOTER */
+footer{background:#111;color:#fff;margin-top:50px;padding:35px 20px}
+.footer-inner{max-width:1200px;margin:auto;text-align:center}
+.footer-logo{font-size:25px;font-weight:bold}
+.footer-logo span{color:#e50914}
+.footer-links{display:flex;justify-content:center;flex-wrap:wrap;gap:15px;margin:15px 0}
+.footer-links button{background:none;border:0;color:#ccc}
+.footer-copy{color:#888;font-size:13px}
+
+/* NOTICE */
+#notice{position:fixed;right:20px;bottom:20px;background:#111;color:#fff;padding:14px 18px;border-radius:7px;display:none;z-index:5000;max-width:350px;box-shadow:0 4px 15px rgba(0,0,0,.3)}
+
+/* LOADING */
+.loading{text-align:center;padding:30px;color:#777}
+
+/* MOBILE */
 @media(max-width:850px){
-
-  .news-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .stats-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .admin-menu{
-    grid-template-columns:1fr 1fr;
-  }
-
+  .news-grid{grid-template-columns:repeat(2,1fr)}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .admin-menu{grid-template-columns:1fr 1fr}
 }
-
 @media(max-width:600px){
-
-  header{
-    padding:11px 12px;
-  }
-
-  .logo{
-    font-size:19px;
-  }
-
-  .header-live{
-    padding:8px 10px;
-    font-size:13px;
-  }
-
-  nav{
-    top:57px;
-  }
-
-  .nav-inner button{
-    padding:11px 10px;
-    font-size:13px;
-  }
-
-  .hero{
-    padding:35px 15px;
-  }
-
-  .hero h1{
-    font-size:30px;
-  }
-
-  .hero p{
-    font-size:15px;
-  }
-
-  .news-grid{
-    grid-template-columns:1fr;
-  }
-
-  .subscribe-form{
-    flex-direction:column;
-  }
-
-  .article{
-    padding:17px;
-  }
-
-  .article h1{
-    font-size:28px;
-  }
-
-  .article-content{
-    font-size:16px;
-  }
-
-  .stats-grid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .admin-menu{
-    grid-template-columns:1fr;
-  }
-
+  header{padding:11px 12px}
+  .logo{font-size:19px}
+  .header-live{padding:8px 10px;font-size:13px}
+  nav{top:57px}
+  .nav-inner button{padding:11px 10px;font-size:13px}
+  .hero{padding:35px 15px}
+  .hero h1{font-size:30px}
+  .hero p{font-size:15px}
+  .news-grid{grid-template-columns:1fr}
+  .subscribe-form{flex-direction:column}
+  .article{padding:17px}
+  .article h1{font-size:28px}
+  .article-content{font-size:16px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .admin-menu{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
-
+<!-- HEADER -->
 <header>
   <div class="header-inner">
-
-    <div class="logo">
-      📷 CAMERA <span>PARTOUT</span>
-    </div>
-
-    <button class="header-live" onclick="showLive()">
-      🔴 LIVE
-    </button>
-
+    <div class="logo">📷 CAMERA <span>PARTOUT</span></div>
+    <button class="header-live" onclick="showLive()">🔴 LIVE</button>
   </div>
 </header>
 
-<!-- ================= NAVIGATION ================= -->
-
+<!-- NAV -->
 <nav>
   <div class="nav-inner">
-
-    <button onclick="showPage('homePage')" class="active">
-      Accueil
-    </button>
-
-    <button onclick="filterCategory('Haïti')">
-      Haïti
-    </button>
-
-    <button onclick="filterCategory('International')">
-      International
-    </button>
-
-    <button onclick="filterCategory('Sport')">
-      Sport
-    </button>
-
-    <button onclick="filterCategory('Économie')">
-      Économie
-    </button>
-
-    <button onclick="filterCategory('Culture')">
-      Culture
-    </button>
-
-    <button onclick="filterCategory('Technologie')">
-      Technologie
-    </button>
-
-    <button onclick="showPage('subscribePage')">
-      S'abonner
-    </button>
-
-    <button onclick="showAdminLogin()">
-      Admin
-    </button>
-
+    <button onclick="showPage('homePage', this)" class="active">Accueil</button>
+    <button onclick="filterCategory('Haïti', this)">Haïti</button>
+    <button onclick="filterCategory('International', this)">International</button>
+    <button onclick="filterCategory('Sport', this)">Sport</button>
+    <button onclick="filterCategory('Économie', this)">Économie</button>
+    <button onclick="filterCategory('Culture', this)">Culture</button>
+    <button onclick="filterCategory('Technologie', this)">Technologie</button>
+    <button onclick="showPage('subscribePage', this)">S'abonner</button>
+    <button onclick="showAdminLogin()">Admin</button>
   </div>
 </nav>
 
-<!-- ================= ADMIN BAR ================= -->
-
+<!-- ADMIN BAR -->
 <div id="adminBar">
-
   <div class="admin-inner">
-
-    <span>
-      ⚙️ Mode administrateur
-    </span>
-
-    <button onclick="logoutAdmin()">
-      Déconnexion
-    </button>
-
+    <span>⚙️ Mode administrateur</span>
+    <button onclick="logoutAdmin()">Déconnexion</button>
   </div>
-
 </div>
 
-<!-- ================= HOME ================= -->
-
+<!-- HOME -->
 <main id="homePage" class="page active">
-
   <section class="hero">
-
-    <h1>
-      CAMERA <span>PARTOUT</span>
-    </h1>
-
-    <p>
-      L'information partout, à tout moment.
-    </p>
-
+    <h1>CAMERA <span>PARTOUT</span></h1>
+    <p>L'information partout, à tout moment.</p>
   </section>
 
   <div class="container">
-
-    <!-- SEARCH -->
-
     <div class="search-box">
-
-      <input
-        type="search"
-        id="searchInput"
-        placeholder="🔎 Rechercher une actualité..."
-        oninput="searchNews()"
-      >
-
+      <input type="search" id="searchInput" placeholder="🔎 Rechercher une actualité..." oninput="searchNews()">
     </div>
 
-    <!-- ================= YOUTUBE LIVE ================= -->
-
     <section class="youtube-live" id="youtubeLiveSection">
-
-      <h2>
-        🔴 CAMERA PARTOUT — EN DIRECT
-      </h2>
-
-      <div class="live-title">
-
-        <span class="live-dot"></span>
-
-        LIVE YOUTUBE
-
-      </div>
-
+      <h2>🔴 CAMERA PARTOUT — EN DIRECT</h2>
+      <div class="live-title"><span class="live-dot"></span> LIVE YOUTUBE</div>
       <div class="youtube-player">
-
         <iframe
           src="https://www.youtube.com/embed/live_stream?channel=UCMYXOsiihaa3yW_TZFb3vXA"
           title="CAMERA PARTOUT - Live YouTube"
@@ -884,587 +221,196 @@ footer{
           allow="autoplay; encrypted-media; picture-in-picture; web-share"
           allowfullscreen>
         </iframe>
-
       </div>
-
       <div class="youtube-info">
-
         Le direct de la chaîne CAMERA PARTOUT apparaît ici lorsqu'un Live YouTube est disponible.
-
       </div>
-
     </section>
-
-    <!-- NEWS -->
 
     <section class="section">
-
-      <h2 class="section-title">
-        📰 Dernières actualités
-      </h2>
-
-      <div
-        id="newsGrid"
-        class="news-grid"
-      >
-
-        <div class="loading">
-          Chargement des actualités...
-        </div>
-
+      <h2 class="section-title">📰 Dernières actualités</h2>
+      <div id="newsGrid" class="news-grid">
+        <div class="loading">Chargement des actualités...</div>
       </div>
-
     </section>
-
-    <!-- SUBSCRIBE -->
 
     <section class="subscribe-box">
-
-      <h2>
-        📩 Recevez nos nouvelles
-      </h2>
-
-      <p>
-        Inscrivez-vous pour recevoir les nouvelles de CAMERA PARTOUT.
-      </p>
-
-      <form
-        class="subscribe-form"
-        onsubmit="subscribeUser(event)"
-      >
-
-        <input
-          type="email"
-          name="email"
-          placeholder="Votre adresse email"
-          required
-        >
-
-        <button type="submit">
-          S'abonner
-        </button>
-
+      <h2>📩 Recevez nos nouvelles</h2>
+      <p>Inscrivez-vous pour recevoir les nouvelles de CAMERA PARTOUT.</p>
+      <form class="subscribe-form" onsubmit="subscribeUser(event)">
+        <input type="email" name="email" placeholder="Votre adresse email" required>
+        <button type="submit">S'abonner</button>
       </form>
-
-      <div
-        id="subscribeMessage"
-        class="message">
-      </div>
-
+      <div id="subscribeMessage" class="message"></div>
     </section>
-
   </div>
-
 </main>
 
-<!-- ================= ARTICLE PAGE ================= -->
-
+<!-- ARTICLE PAGE -->
 <main id="articlePage" class="page">
-
   <div class="container">
-
     <div class="article">
-
-      <button
-        class="back-button"
-        onclick="showPage('homePage')"
-      >
-        ← Retour
-      </button>
-
-      <div id="articleContent">
-
-        <div class="loading">
-          Chargement...
-        </div>
-
-      </div>
-
+      <button class="back-button" onclick="goHome()">← Retour</button>
+      <div id="articleContent"><div class="loading">Chargement...</div></div>
     </div>
-
   </div>
-
 </main>
 
-<!-- ================= SUBSCRIBE PAGE ================= -->
-
+<!-- SUBSCRIBE PAGE -->
 <main id="subscribePage" class="page">
-
   <div class="container">
-
     <div class="form-card">
-
-      <h2>
-        📩 Abonnez-vous à CAMERA PARTOUT
-      </h2>
-
-      <p style="margin:10px 0 20px;">
-        Recevez les nouvelles importantes directement par email.
-      </p>
-
-      <form
-        onsubmit="subscribeUser(event)"
-      >
-
+      <h2>📩 Abonnez-vous à CAMERA PARTOUT</h2>
+      <p style="margin:10px 0 20px;">Recevez les nouvelles importantes directement par email.</p>
+      <form onsubmit="subscribeUser(event)">
         <div class="form-group">
-
-          <label>
-            Adresse email
-          </label>
-
-          <input
-            type="email"
-            name="email"
-            placeholder="exemple@email.com"
-            required
-          >
-
+          <label>Adresse email</label>
+          <input type="email" name="email" placeholder="exemple@email.com" required>
         </div>
-
-        <button
-          class="primary-button"
-          type="submit"
-        >
-          S'abonner
-        </button>
-
-        <div
-          id="subscribeMessagePage"
-          class="message">
-        </div>
-
+        <button class="primary-button" type="submit">S'abonner</button>
+        <div id="subscribeMessagePage" class="message"></div>
       </form>
-
     </div>
-
   </div>
-
 </main>
 
-<!-- ================= ADMIN LOGIN ================= -->
-
+<!-- ADMIN LOGIN -->
 <main id="adminLoginPage" class="page">
-
   <div class="container">
-
     <div class="form-card">
-
-      <h2>
-        🔐 Administration
-      </h2>
-
-      <p style="margin:10px 0 20px;">
-        Entrez le code administrateur.
-      </p>
-
+      <h2>🔐 Administration</h2>
+      <p style="margin:10px 0 20px;">Connectez-vous avec votre compte administrateur.</p>
       <form onsubmit="adminLogin(event)">
-
         <div class="form-group">
-
-          <label>
-            Code administrateur
-          </label>
-
-          <input
-            type="password"
-            id="adminCode"
-            placeholder="Code"
-            required
-          >
-
+          <label>Email administrateur</label>
+          <input type="email" id="adminEmail" placeholder="admin@camerapartout.com" required>
         </div>
-
-        <button
-          class="primary-button"
-          type="submit"
-        >
-          Connexion
-        </button>
-
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" id="adminCode" placeholder="Mot de passe" required>
+        </div>
+        <button class="primary-button" type="submit">Connexion</button>
       </form>
-
-      <div
-        id="adminLoginMessage"
-        class="message">
-      </div>
-
+      <div id="adminLoginMessage" class="message"></div>
     </div>
-
   </div>
-
 </main>
 
-<!-- ================= ADMIN PAGE ================= -->
-
+<!-- ADMIN PAGE -->
 <main id="adminPage" class="page">
-
   <div class="container">
-
     <div class="section">
-
-      <h2 class="section-title">
-        ⚙️ Administration
-      </h2>
-
+      <h2 class="section-title">⚙️ Administration</h2>
       <div class="admin-menu">
-
-        <button onclick="showPage('publishPage')">
-          📝 Publier une nouvelle
-        </button>
-
-        <button onclick="showPage('analyticsPage');loadAnalytics()">
-          📊 Statistiques
-        </button>
-
-        <button onclick="loadNews()">
-          🔄 Actualiser les nouvelles
-        </button>
-
+        <button onclick="showPage('publishPage')">📝 Publier une nouvelle</button>
+        <button onclick="showPage('analyticsPage'); loadAnalytics()">📊 Statistiques</button>
+        <button onclick="loadNews()">🔄 Actualiser les nouvelles</button>
       </div>
-
       <div class="form-card">
-
-        <h3>
-          Informations du site
-        </h3>
-
-        <p style="margin-top:10px;">
-          <strong>Site :</strong> CAMERA PARTOUT
-        </p>
-
-        <p>
-          <strong>Chaîne YouTube :</strong> CAMERA PARTOUT
-        </p>
-
-        <p>
-          <strong>Statut :</strong> <span style="color:green;">● En ligne</span>
-        </p>
-
+        <h3>Informations du site</h3>
+        <p style="margin-top:10px;"><strong>Site :</strong> CAMERA PARTOUT</p>
+        <p><strong>Chaîne YouTube :</strong> CAMERA PARTOUT</p>
+        <p><strong>Statut :</strong> <span style="color:green;">● En ligne</span></p>
       </div>
-
     </div>
-
   </div>
-
 </main>
 
-<!-- ================= PUBLISH PAGE ================= -->
-
+<!-- PUBLISH PAGE -->
 <main id="publishPage" class="page">
-
   <div class="container">
-
     <div class="form-card">
-
-      <button
-        class="back-button"
-        onclick="showPage('adminPage')"
-      >
-        ← Administration
-      </button>
-
-      <h2>
-        📝 Publier une nouvelle
-      </h2>
-
-      <form
-        id="publishForm"
-        onsubmit="publishNews(event)"
-      >
-
+      <button class="back-button" onclick="showPage('adminPage')">← Administration</button>
+      <h2>📝 Publier une nouvelle</h2>
+      <form id="publishForm" onsubmit="publishNews(event)">
         <div class="form-group">
-
-          <label>
-            Titre
-          </label>
-
-          <input
-            type="text"
-            id="newsTitle"
-            required
-            placeholder="Titre de la nouvelle"
-          >
-
+          <label>Titre</label>
+          <input type="text" id="newsTitle" required placeholder="Titre de la nouvelle">
         </div>
-
         <div class="form-group">
-
-          <label>
-            Catégorie
-          </label>
-
+          <label>Catégorie</label>
           <select id="newsCategory" required>
-
-            <option value="Haïti">
-              Haïti
-            </option>
-
-            <option value="International">
-              International
-            </option>
-
-            <option value="Sport">
-              Sport
-            </option>
-
-            <option value="Économie">
-              Économie
-            </option>
-
-            <option value="Culture">
-              Culture
-            </option>
-
-            <option value="Technologie">
-              Technologie
-            </option>
-
+            <option value="Haïti">Haïti</option>
+            <option value="International">International</option>
+            <option value="Sport">Sport</option>
+            <option value="Économie">Économie</option>
+            <option value="Culture">Culture</option>
+            <option value="Technologie">Technologie</option>
           </select>
-
         </div>
-
         <div class="form-group">
-
-          <label>
-            Résumé
-          </label>
-
-          <textarea
-            id="newsSummary"
-            placeholder="Petit résumé de la nouvelle..."
-            required
-          ></textarea>
-
+          <label>Résumé</label>
+          <textarea id="newsSummary" placeholder="Petit résumé de la nouvelle..." required></textarea>
         </div>
-
         <div class="form-group">
-
-          <label>
-            Contenu complet
-          </label>
-
-          <textarea
-            id="newsContent"
-            placeholder="Écrivez le contenu complet de la nouvelle..."
-            required
-          ></textarea>
-
+          <label>Contenu complet</label>
+          <textarea id="newsContent" placeholder="Écrivez le contenu complet de la nouvelle..." required></textarea>
         </div>
-
         <div class="form-group">
-
-          <label>
-            Image
-          </label>
-
-          <input
-            type="file"
-            id="newsImage"
-            accept="image/*"
-            onchange="previewSelectedImage(event)"
-          >
-
-          <img
-            id="imagePreview"
-            class="preview-image"
-            style="display:none;"
-          >
-
+          <label>Image</label>
+          <input type="file" id="newsImage" accept="image/*" onchange="previewSelectedImage(event)">
+          <img id="imagePreview" class="preview-image" style="display:none;">
         </div>
-
         <div class="form-group">
-
-          <label>
-            Ou prendre une photo
-          </label>
-
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onchange="cameraImageSelected(event)"
-          >
-
+          <label>Ou prendre une photo</label>
+          <input type="file" accept="image/*" capture="environment" onchange="cameraImageSelected(event)">
         </div>
-
-        <button
-          type="submit"
-          class="primary-button"
-        >
-          🚀 Publier
-        </button>
-
-        <div
-          id="publishMessage"
-          class="message">
-        </div>
-
+        <button type="submit" class="primary-button">🚀 Publier</button>
+        <div id="publishMessage" class="message"></div>
       </form>
-
     </div>
-
   </div>
-
 </main>
 
-<!-- ================= ANALYTICS ================= -->
-
+<!-- ANALYTICS -->
 <main id="analyticsPage" class="page">
-
   <div class="container">
-
     <div class="section">
-
-      <button
-        class="back-button"
-        onclick="showPage('adminPage')"
-      >
-        ← Administration
-      </button>
-
-      <h2 class="section-title">
-        📊 Statistiques
-      </h2>
-
+      <button class="back-button" onclick="showPage('adminPage')">← Administration</button>
+      <h2 class="section-title">📊 Statistiques</h2>
       <div class="stats-grid">
-
-        <div class="stat-card">
-
-          <strong id="totalNews">
-            0
-          </strong>
-
-          Articles
-
-        </div>
-
-        <div class="stat-card">
-
-          <strong id="totalSubscribers">
-            0
-          </strong>
-
-          Abonnés
-
-        </div>
-
-        <div class="stat-card">
-
-          <strong id="totalVisits">
-            0
-          </strong>
-
-          Visites
-
-        </div>
-
-        <div class="stat-card">
-
-          <strong id="onlineUsers">
-            0
-          </strong>
-
-          En ligne
-
-        </div>
-
+        <div class="stat-card"><strong id="totalNews">0</strong>Articles</div>
+        <div class="stat-card"><strong id="totalSubscribers">0</strong>Abonnés</div>
+        <div class="stat-card"><strong id="totalVisits">0</strong>Visites</div>
+        <div class="stat-card"><strong id="onlineUsers">0</strong>En ligne</div>
       </div>
-
       <div class="chart">
-
-        <h3>
-          Visites des 30 derniers jours
-        </h3>
-
-        <div
-          id="chartBars"
-          class="chart-bars">
-        </div>
-
+        <h3>Visites des 30 derniers jours</h3>
+        <div id="chartBars" class="chart-bars"></div>
       </div>
-
     </div>
-
   </div>
-
 </main>
 
-<!-- ================= FOOTER ================= -->
-
+<!-- FOOTER -->
 <footer>
-
   <div class="footer-inner">
-
-    <div class="footer-logo">
-      📷 CAMERA <span>PARTOUT</span>
-    </div>
-
+    <div class="footer-logo">📷 CAMERA <span>PARTOUT</span></div>
     <div class="footer-links">
-
-      <button onclick="showPage('homePage')">
-        Accueil
-      </button>
-
-      <button onclick="showPage('subscribePage')">
-        S'abonner
-      </button>
-
-      <button onclick="showLive()">
-        🔴 Live
-      </button>
-
-      <button
-        onclick="window.open('https://youtube.com/@camerapartout','_blank')"
-      >
-        YouTube
-      </button>
-
+      <button onclick="showPage('homePage')">Accueil</button>
+      <button onclick="showPage('subscribePage')">S'abonner</button>
+      <button onclick="showLive()">🔴 Live</button>
+      <button onclick="window.open('https://youtube.com/@camerapartout','_blank','noopener,noreferrer')">YouTube</button>
     </div>
-
     <div class="footer-copy">
-
-      © <span id="currentYear"></span>
-      CAMERA PARTOUT — Tous droits réservés.
-
+      © <span id="currentYear"></span> CAMERA PARTOUT — Tous droits réservés.
     </div>
-
   </div>
-
 </footer>
-
-<!-- ================= NOTICE ================= -->
 
 <div id="notice"></div>
 
-<!-- ================= JAVASCRIPT ================= -->
-
 <script>
-
 /* =========================================================
    CONFIGURATION
 ========================================================= */
 
-const SUPABASE_URL =
-"https://nioetezsutbxxrwpsexb.supabase.co";
+const SUPABASE_URL = "https://nioetezsutbxxrwpsexb.supabase.co";
+const SUPABASE_KEY = "sb_publishable_nB197b7wwsay5oqd1zsfxA_eHmDRDcH";
+const STORAGE_BUCKET = "news-images";
+const YOUTUBE_CHANNEL_ID = "UCMYXOsiihaa3yW_TZFb3vXA";
 
-const SUPABASE_KEY =
-"sb_publishable_nB197b7wwsay5oqd1zsfxA_eHmDRDcH";
-
-const ADMIN_CODE =
-"GODISGOOD";
-
-const STORAGE_BUCKET =
-"news-images";
-
-const YOUTUBE_CHANNEL_ID =
-"UCMYXOsiihaa3yW_TZFb3vXA";
-
-const supabaseClient =
-window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* =========================================================
    VARIABLES
@@ -1474,1920 +420,821 @@ let allNews = [];
 let currentNews = null;
 let isAdmin = false;
 let sessionId = null;
+let cameraFile = null;
 
+const DEFAULT_SECTION_TITLE = "📰 Dernières actualités";
 
 /* =========================================================
    INIT
 ========================================================= */
 
-document.addEventListener(
-  "DOMContentLoaded",
-  async function(){
+document.addEventListener("DOMContentLoaded", async function(){
 
-    document.getElementById(
-      "currentYear"
-    ).textContent =
-      new Date().getFullYear();
+  document.getElementById("currentYear").textContent = new Date().getFullYear();
 
-    await loadNews();
+  await loadNews();
+  await registerVisit();
+  await startOnlineSession();
 
-    await registerVisit();
+  setInterval(heartbeatSession, 30000);
+  setInterval(refreshYouTubeLive, 10 * 60 * 1000);
 
-    await startOnlineSession();
+  const params = new URLSearchParams(window.location.search);
+  const postId = params.get("post");
+  if(postId) await openArticle(postId);
 
-    setInterval(
-      heartbeatSession,
-      30000
-    );
-
-    const params =
-      new URLSearchParams(
-        window.location.search
-      );
-
-    const postId =
-      params.get("post");
-
-    if(postId){
-
-      await openArticle(postId);
-
+  // Détection de session admin existante
+  try {
+    const { data } = await supabaseClient.auth.getSession();
+    if(data && data.session){
+      isAdmin = true;
+      document.getElementById("adminBar").style.display = "block";
     }
-
-  }
-);
-
+  } catch(e){ console.log(e); }
+});
 
 /* =========================================================
    NAVIGATION
 ========================================================= */
 
-function showPage(pageId){
+function showPage(pageId, btn){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  const page = document.getElementById(pageId);
+  if(page) page.classList.add("active");
 
-  document
-    .querySelectorAll(".page")
-    .forEach(function(page){
+  document.querySelectorAll(".nav-inner button").forEach(b => b.classList.remove("active"));
+  if(btn) btn.classList.add("active");
 
-      page.classList.remove("active");
+  // Reset accueil
+  if(pageId === "homePage"){
+    const t = document.querySelector(".section-title");
+    if(t) t.textContent = DEFAULT_SECTION_TITLE;
+    const s = document.getElementById("searchInput");
+    if(s) s.value = "";
+    renderNews(allNews);
 
-    });
-
-  const page =
-    document.getElementById(pageId);
-
-  if(page){
-
-    page.classList.add("active");
-
+    // Retire ?post= de l'URL
+    if(window.location.search.includes("post=")){
+      history.replaceState(null, "", window.location.pathname);
+    }
   }
 
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
+  window.scrollTo({ top:0, behavior:"smooth" });
 }
 
+function goHome(){
+  history.replaceState(null, "", window.location.pathname);
+  currentNews = null;
+  showPage("homePage");
+}
 
 function showLive(){
-
   showPage("homePage");
-
   setTimeout(function(){
-
-    const live =
-      document.getElementById(
-        "youtubeLiveSection"
-      );
-
-    if(live){
-
-      live.scrollIntoView({
-        behavior:"smooth"
-      });
-
-    }
-
-  },100);
-
+    const live = document.getElementById("youtubeLiveSection");
+    if(live) live.scrollIntoView({ behavior:"smooth" });
+  }, 100);
 }
 
-
 /* =========================================================
-   NAV ACTIVE
-========================================================= */
-
-function updateActiveNav(){
-
-  document
-    .querySelectorAll(".nav-inner button")
-    .forEach(function(button){
-
-      button.classList.remove("active");
-
-    });
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
+   ESCAPE
 ========================================================= */
 
 function escapeHTML(value){
-
-  if(value === null ||
-     value === undefined){
-
-    return "";
-
-  }
-
+  if(value === null || value === undefined) return "";
   return String(value)
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
-
 }
 
-
-function escapeAttribute(value){
-
-  return escapeHTML(value);
-
-}
-
+function escapeAttribute(value){ return escapeHTML(value); }
 
 /* =========================================================
    DATE
 ========================================================= */
 
 function formatDate(date){
-
-  if(!date){
-
-    return "";
-
-  }
-
-  return new Date(date)
-    .toLocaleDateString(
-      "fr-FR",
-      {
-        day:"2-digit",
-        month:"long",
-        year:"numeric"
-      }
-    );
-
+  if(!date) return "";
+  return new Date(date).toLocaleDateString("fr-FR", {
+    day:"2-digit", month:"long", year:"numeric"
+  });
 }
-
 
 /* =========================================================
    NOTICE
 ========================================================= */
 
 function showNotice(message){
-
-  const notice =
-    document.getElementById(
-      "notice"
-    );
-
-  notice.textContent =
-    message;
-
-  notice.style.display =
-    "block";
-
-  setTimeout(function(){
-
-    notice.style.display =
-      "none";
-
-  },3500);
-
+  const notice = document.getElementById("notice");
+  notice.textContent = message;
+  notice.style.display = "block";
+  setTimeout(() => { notice.style.display = "none"; }, 3500);
 }
-
 
 /* =========================================================
    LOAD NEWS
 ========================================================= */
 
 async function loadNews(){
+  const grid = document.getElementById("newsGrid");
+  if(grid) grid.innerHTML = `<div class="loading">Chargement des actualités...</div>`;
 
-  const grid =
-    document.getElementById(
-      "newsGrid"
-    );
-
-  if(grid){
-
-    grid.innerHTML =
-      `<div class="loading">
-        Chargement des actualités...
-      </div>`;
-
-  }
-
-  try{
-
-    const result =
-      await supabaseClient
+  try {
+    const result = await supabaseClient
       .from("news")
       .select("*")
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      );
+      .order("created_at", { ascending:false });
 
-    if(result.error){
+    if(result.error) throw result.error;
 
-      throw result.error;
-
-    }
-
-    allNews =
-      result.data || [];
-
-    renderNews(
-      allNews
-    );
-
-  }
-  catch(error){
-
+    allNews = result.data || [];
+    renderNews(allNews);
+  } catch(error){
     console.error(error);
-
-    if(grid){
-
-      grid.innerHTML =
-        `<div class="loading">
-          Impossible de charger les actualités.
-        </div>`;
-
-    }
-
+    if(grid) grid.innerHTML = `<div class="loading">Impossible de charger les actualités.</div>`;
   }
-
 }
-
 
 /* =========================================================
    RENDER NEWS
 ========================================================= */
 
 function renderNews(newsList){
-
-  const grid =
-    document.getElementById(
-      "newsGrid"
-    );
-
-  if(!grid){
-
-    return;
-
-  }
+  const grid = document.getElementById("newsGrid");
+  if(!grid) return;
 
   if(!newsList.length){
-
-    grid.innerHTML =
-      `<div class="loading">
-        Aucune actualité disponible.
-      </div>`;
-
+    grid.innerHTML = `<div class="loading">Aucune actualité disponible.</div>`;
     return;
-
   }
 
-  grid.innerHTML =
-    newsList.map(function(item){
-
-      const image =
-        item.image_url ||
-        item.image ||
-        "";
-
-      return `
-
-        <article class="news-card">
-
-          ${
-            image
-            ?
-            `<img
-              src="${escapeAttribute(image)}"
-              alt="${escapeAttribute(item.title || "")}"
-              loading="lazy"
-            >`
-            :
-            `<div
-              style="
-                height:210px;
-                background:#ddd;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-size:50px;
-              "
-            >
-              📰
-            </div>`
-          }
-
-          <div class="news-card-content">
-
-            <span class="news-category">
-              ${escapeHTML(item.category || "Actualité")}
-            </span>
-
-            <h3>
-              ${escapeHTML(item.title || "")}
-            </h3>
-
-            <p>
-              ${escapeHTML(item.summary || item.content || "")}
-            </p>
-
-            <div class="news-date">
-              ${formatDate(item.created_at)}
-            </div>
-
-            <button
-              class="read-button"
-              onclick="openArticle('${escapeAttribute(item.id)}')"
-            >
-              Lire la suite →
-            </button>
-
-          </div>
-
-        </article>
-
-      `;
-
-    }).join("");
-
+  grid.innerHTML = newsList.map(function(item){
+    const image = item.image_url || item.image || "";
+    return `
+      <article class="news-card">
+        ${ image
+          ? `<img src="${escapeAttribute(image)}" alt="${escapeAttribute(item.title || "")}" loading="lazy">`
+          : `<div style="height:210px;background:#ddd;display:flex;align-items:center;justify-content:center;font-size:50px;">📰</div>`
+        }
+        <div class="news-card-content">
+          <span class="news-category">${escapeHTML(item.category || "Actualité")}</span>
+          <h3>${escapeHTML(item.title || "")}</h3>
+          <p>${escapeHTML(item.summary || item.content || "")}</p>
+          <div class="news-date">${formatDate(item.created_at)}</div>
+          <button class="read-button" onclick="openArticle('${escapeAttribute(item.id)}')">
+            Lire la suite →
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
 }
-
 
 /* =========================================================
    SEARCH
 ========================================================= */
 
 function searchNews(){
-
-  const input =
-    document.getElementById(
-      "searchInput"
-    );
-
-  const query =
-    input.value
-      .toLowerCase()
-      .trim();
+  const input = document.getElementById("searchInput");
+  const query = input.value.toLowerCase().trim();
+  const title = document.querySelector(".section-title");
 
   if(!query){
-
-    renderNews(
-      allNews
-    );
-
+    if(title) title.textContent = DEFAULT_SECTION_TITLE;
+    renderNews(allNews);
     return;
-
   }
 
-  const results =
-    allNews.filter(function(item){
+  if(title) title.textContent = "🔎 Résultats pour « " + query + " »";
 
-      return (
-
-        String(
-          item.title || ""
-        )
-        .toLowerCase()
-        .includes(query)
-
-        ||
-
-        String(
-          item.summary || ""
-        )
-        .toLowerCase()
-        .includes(query)
-
-        ||
-
-        String(
-          item.content || ""
-        )
-        .toLowerCase()
-        .includes(query)
-
-        ||
-
-        String(
-          item.category || ""
-        )
-        .toLowerCase()
-        .includes(query)
-
-      );
-
-    });
+  const results = allNews.filter(item =>
+    String(item.title || "").toLowerCase().includes(query) ||
+    String(item.summary || "").toLowerCase().includes(query) ||
+    String(item.content || "").toLowerCase().includes(query) ||
+    String(item.category || "").toLowerCase().includes(query)
+  );
 
   renderNews(results);
-
 }
-
 
 /* =========================================================
    CATEGORY
 ========================================================= */
 
-function filterCategory(category){
+function filterCategory(category, btn){
+  showPage("homePage", btn);
 
-  showPage(
-    "homePage"
+  const search = document.getElementById("searchInput");
+  if(search) search.value = "";
+
+  const results = allNews.filter(item =>
+    String(item.category || "").toLowerCase() === category.toLowerCase()
   );
-
-  const results =
-    allNews.filter(function(item){
-
-      return String(
-        item.category || ""
-      ).toLowerCase() ===
-      category.toLowerCase();
-
-    });
 
   renderNews(results);
 
-  const title =
-    document.querySelector(
-      ".section-title"
-    );
+  const title = document.querySelector(".section-title");
+  if(title) title.textContent = "📰 " + category;
 
-  if(title){
-
-    title.textContent =
-      "📰 " + category;
-
-  }
-
-  setTimeout(function(){
-
-    const newsGrid =
-      document.getElementById(
-        "newsGrid"
-      );
-
-    if(newsGrid){
-
-      newsGrid.scrollIntoView({
-        behavior:"smooth"
-      });
-
-    }
-
-  },100);
-
+  setTimeout(() => {
+    document.getElementById("newsGrid")?.scrollIntoView({ behavior:"smooth" });
+  }, 100);
 }
-
 
 /* =========================================================
    ARTICLE
 ========================================================= */
 
 async function openArticle(id){
+  const content = document.getElementById("articleContent");
+  showPage("articlePage");
+  content.innerHTML = `<div class="loading">Chargement...</div>`;
 
-  const articlePage =
-    document.getElementById(
-      "articlePage"
-    );
-
-  const content =
-    document.getElementById(
-      "articleContent"
-    );
-
-  showPage(
-    "articlePage"
-  );
-
-  content.innerHTML =
-    `<div class="loading">
-      Chargement...
-    </div>`;
-
-  try{
-
-    let article =
-      allNews.find(function(item){
-
-        return String(item.id) ===
-          String(id);
-
-      });
+  try {
+    let article = allNews.find(item => String(item.id) === String(id));
 
     if(!article){
-
-      const result =
-        await supabaseClient
-        .from("news")
-        .select("*")
-        .eq("id",id)
-        .single();
-
-      if(result.error){
-
-        throw result.error;
-
-      }
-
-      article =
-        result.data;
-
+      const result = await supabaseClient.from("news").select("*").eq("id", id).single();
+      if(result.error) throw result.error;
+      article = result.data;
     }
 
-    currentNews =
-      article;
-
-    const image =
-      article.image_url ||
-      article.image ||
-      "";
+    currentNews = article;
+    const image = article.image_url || article.image || "";
 
     content.innerHTML = `
-
-      <span class="news-category">
-        ${escapeHTML(article.category || "Actualité")}
-      </span>
-
-      <h1>
-        ${escapeHTML(article.title || "")}
-      </h1>
-
-      <div class="article-meta">
-        ${formatDate(article.created_at)}
-      </div>
-
-      ${
-        image
-        ?
-        `<img
-          src="${escapeAttribute(image)}"
-          alt="${escapeAttribute(article.title || "")}"
-        >`
-        :
-        ""
-      }
-
-      <div class="article-content">
-        ${escapeHTML(article.content || article.summary || "")}
-      </div>
-
+      <span class="news-category">${escapeHTML(article.category || "Actualité")}</span>
+      <h1>${escapeHTML(article.title || "")}</h1>
+      <div class="article-meta">${formatDate(article.created_at)}</div>
+      ${ image ? `<img src="${escapeAttribute(image)}" alt="${escapeAttribute(article.title || "")}">` : "" }
+      <div class="article-content">${escapeHTML(article.content || article.summary || "")}</div>
       <div class="article-actions">
-
-        <button
-          class="like"
-          onclick="likeArticle('${escapeAttribute(article.id)}')"
-        >
-          ❤️ J'aime
-          <span id="likeCount">0</span>
+        <button class="like" onclick="likeArticle('${escapeAttribute(article.id)}')">
+          ❤️ J'aime <span id="likeCount">0</span>
         </button>
-
-        <button
-          class="whatsapp"
-          onclick="shareWhatsApp()"
-        >
-          WhatsApp
-        </button>
-
-        <button
-          class="facebook"
-          onclick="shareFacebook()"
-        >
-          Facebook
-        </button>
-
-        <button
-          onclick="shareArticle()"
-        >
-          🔗 Partager
-        </button>
-
+        <button class="whatsapp" onclick="shareWhatsApp()">WhatsApp</button>
+        <button class="facebook" onclick="shareFacebook()">Facebook</button>
+        <button onclick="shareArticle()">🔗 Partager</button>
+        ${ isAdmin ? `
+          <button class="secondary-button" onclick="editArticle('${escapeAttribute(article.id)}')">✏️ Modifier</button>
+          <button class="danger" onclick="deleteNews('${escapeAttribute(article.id)}')">🗑️ Supprimer</button>
+        ` : "" }
       </div>
-
     `;
 
-    history.replaceState(
-      null,
-      "",
-      "?post=" + encodeURIComponent(id)
-    );
-
-    await loadLikeCount(
-      article.id
-    );
-
-  }
-  catch(error){
-
+    history.replaceState(null, "", "?post=" + encodeURIComponent(id));
+    await loadLikeCount(article.id);
+  } catch(error){
     console.error(error);
-
-    content.innerHTML =
-      `<div class="loading">
-        Article introuvable.
-      </div>`;
-
+    content.innerHTML = `<div class="loading">Article introuvable.</div>`;
   }
-
 }
-
 
 /* =========================================================
    LIKES
 ========================================================= */
 
 async function loadLikeCount(postId){
-
-  try{
-
-    const result =
-      await supabaseClient
+  try {
+    const result = await supabaseClient
       .from("post_likes")
-      .select(
-        "id",
-        {
-          count:"exact",
-          head:true
-        }
-      )
-      .eq(
-        "post_id",
-        postId
-      );
+      .select("id", { count:"exact", head:true })
+      .eq("post_id", postId);
 
-    const count =
-      result.count || 0;
-
-    const element =
-      document.getElementById(
-        "likeCount"
-      );
-
-    if(element){
-
-      element.textContent =
-        count;
-
-    }
-
-  }
-  catch(error){
-
-    console.error(error);
-
-  }
-
+    const count = result.count || 0;
+    const element = document.getElementById("likeCount");
+    if(element) element.textContent = count;
+  } catch(error){ console.error(error); }
 }
-
 
 async function likeArticle(postId){
+  // Protection locale : 1 like par article par navigateur
+  if(localStorage.getItem("liked_" + postId)){
+    showNotice("Vous avez déjà aimé cet article.");
+    return;
+  }
 
-  try{
-
-    const result =
-      await supabaseClient
+  try {
+    const result = await supabaseClient
       .from("post_likes")
-      .insert({
+      .insert({ post_id: postId, session_id: sessionId || null });
 
-        post_id:postId
+    if(result.error) throw result.error;
 
-      });
-
-    if(result.error){
-
-      throw result.error;
-
-    }
-
-    await loadLikeCount(
-      postId
-    );
-
-    showNotice(
-      "❤️ Merci pour votre J'aime !"
-    );
-
-  }
-  catch(error){
-
+    localStorage.setItem("liked_" + postId, "1");
+    await loadLikeCount(postId);
+    showNotice("❤️ Merci pour votre J'aime !");
+  } catch(error){
     console.error(error);
-
-    showNotice(
-      "Impossible d'ajouter le J'aime."
-    );
-
+    showNotice("Impossible d'ajouter le J'aime.");
   }
-
 }
-
 
 /* =========================================================
    SHARE
 ========================================================= */
 
-function getShareUrl(){
-
-  return window.location.href;
-
-}
-
+function getShareUrl(){ return window.location.href; }
 
 function shareWhatsApp(){
-
-  if(!currentNews){
-
-    return;
-
-  }
-
-  const text =
-    currentNews.title +
-    "\n\n" +
-    getShareUrl();
-
-  window.open(
-    "https://wa.me/?text=" +
-    encodeURIComponent(text),
-    "_blank"
-  );
-
+  if(!currentNews) return;
+  const text = currentNews.title + "\n\n" + getShareUrl();
+  window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener,noreferrer");
 }
-
 
 function shareFacebook(){
-
   window.open(
-    "https://www.facebook.com/sharer/sharer.php?u=" +
-    encodeURIComponent(
-      getShareUrl()
-    ),
-    "_blank"
+    "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(getShareUrl()),
+    "_blank", "noopener,noreferrer"
   );
-
 }
-
 
 async function shareArticle(){
-
-  if(!currentNews){
-
-    return;
-
-  }
+  if(!currentNews) return;
 
   const shareData = {
-
-    title:
-      currentNews.title,
-
-    text:
-      currentNews.summary ||
-      currentNews.content ||
-      "",
-
-    url:
-      getShareUrl()
-
+    title: currentNews.title,
+    text: currentNews.summary || currentNews.content || "",
+    url: getShareUrl()
   };
 
-  try{
-
-    if(
-      navigator.share
-    ){
-
-      await navigator.share(
-        shareData
-      );
-
+  try {
+    if(navigator.share){
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText(getShareUrl());
+      showNotice("Lien copié !");
     }
-    else{
-
-      await navigator.clipboard.writeText(
-        getShareUrl()
-      );
-
-      showNotice(
-        "Lien copié !"
-      );
-
+  } catch(error){
+    if(error && error.name === "AbortError") return;
+    try {
+      await navigator.clipboard.writeText(getShareUrl());
+      showNotice("Lien copié !");
+    } catch(e){
+      showNotice("Impossible de partager.");
     }
-
   }
-  catch(error){
-
-    if(
-      error &&
-      error.name ===
-      "AbortError"
-    ){
-
-      return;
-
-    }
-
-    try{
-
-      await navigator.clipboard.writeText(
-        getShareUrl()
-      );
-
-      showNotice(
-        "Lien copié !"
-      );
-
-    }
-    catch(e){
-
-      showNotice(
-        "Impossible de partager."
-      );
-
-    }
-
-  }
-
 }
-
 
 /* =========================================================
    SUBSCRIBE
 ========================================================= */
 
 async function subscribeUser(event){
-
   event.preventDefault();
 
-  const form =
-    event.currentTarget;
+  const form = event.currentTarget;
+  const email = form.querySelector('input[name="email"]').value.trim().toLowerCase();
 
-  const email =
-    form.querySelector(
-      'input[name="email"]'
-    ).value
-    .trim()
-    .toLowerCase();
+  const homeMessage = document.getElementById("subscribeMessage");
+  const pageMessage = document.getElementById("subscribeMessagePage");
+  const target = form.closest(".subscribe-box") ? homeMessage : pageMessage;
 
-  const message =
-    form.closest("form")
-      ? form.querySelector(".message")
-      : null;
+  if(target) target.textContent = "Inscription...";
 
-  const homeMessage =
-    document.getElementById(
-      "subscribeMessage"
-    );
-
-  const pageMessage =
-    document.getElementById(
-      "subscribeMessagePage"
-    );
-
-  let target =
-    message ||
-    (
-      form.closest(".subscribe-box")
-      ?
-      homeMessage
-      :
-      pageMessage
-    );
-
-  if(target){
-
-    target.textContent =
-      "Inscription...";
-
-  }
-
-  try{
-
-    const result =
-      await supabaseClient
+  try {
+    const result = await supabaseClient
       .from("subscribers")
-      .upsert(
-        {
-          email:email
-        },
-        {
-          onConflict:"email"
-        }
-      );
+      .upsert({ email }, { onConflict:"email" });
 
-    if(result.error){
+    if(result.error) throw result.error;
 
-      throw result.error;
-
-    }
-
-    if(target){
-
-      target.textContent =
-        "✅ Vous êtes maintenant abonné !";
-
-    }
-
+    if(target) target.textContent = "✅ Vous êtes maintenant abonné !";
     form.reset();
-
-    showNotice(
-      "Merci pour votre abonnement !"
-    );
-
-  }
-  catch(error){
-
+    showNotice("Merci pour votre abonnement !");
+  } catch(error){
     console.error(error);
-
-    if(target){
-
-      target.textContent =
-        "❌ Une erreur est survenue.";
-
-    }
-
+    if(target) target.textContent = "❌ Une erreur est survenue.";
   }
-
 }
 
-
 /* =========================================================
-   ADMIN LOGIN
+   ADMIN LOGIN (Supabase Auth)
 ========================================================= */
 
 function showAdminLogin(){
-
   if(isAdmin){
-
-    showPage(
-      "adminPage"
-    );
-
+    showPage("adminPage");
     return;
-
   }
-
-  showPage(
-    "adminLoginPage"
-  );
-
+  showPage("adminLoginPage");
 }
 
-
-function adminLogin(event){
-
+async function adminLogin(event){
   event.preventDefault();
 
-  const code =
-    document.getElementById(
-      "adminCode"
-    ).value;
+  const email = document.getElementById("adminEmail").value.trim();
+  const password = document.getElementById("adminCode").value;
+  const message = document.getElementById("adminLoginMessage");
 
-  const message =
-    document.getElementById(
-      "adminLoginMessage"
-    );
+  message.textContent = "Connexion...";
 
-  if(code === ADMIN_CODE){
+  try {
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-    isAdmin = true;
-
-    localStorage.setItem(
-      "camera_partout_admin",
-      "true"
-    );
-
-    document.getElementById(
-      "adminBar"
-    ).style.display =
-      "block";
-
-    message.textContent =
-      "✅ Connexion réussie.";
-
-    setTimeout(function(){
-
-      showPage(
-        "adminPage"
-      );
-
-    },500);
-
-  }
-  else{
-
-    message.textContent =
-      "❌ Code incorrect.";
-
-  }
-
-}
-
-
-/* =========================================================
-   CHECK ADMIN
-========================================================= */
-
-if(
-  localStorage.getItem(
-    "camera_partout_admin"
-  ) === "true"
-){
-
-  isAdmin = true;
-
-  setTimeout(function(){
-
-    const bar =
-      document.getElementById(
-        "adminBar"
-      );
-
-    if(bar){
-
-      bar.style.display =
-        "block";
-
+    if(error){
+      message.textContent = "❌ " + error.message;
+      return;
     }
 
-  },100);
+    isAdmin = true;
+    document.getElementById("adminBar").style.display = "block";
+    message.textContent = "✅ Connexion réussie.";
 
+    setTimeout(() => showPage("adminPage"), 500);
+  } catch(e){
+    console.error(e);
+    message.textContent = "❌ Erreur de connexion.";
+  }
 }
 
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-function logoutAdmin(){
-
+async function logoutAdmin(){
+  try { await supabaseClient.auth.signOut(); } catch(e){ console.log(e); }
   isAdmin = false;
-
-  localStorage.removeItem(
-    "camera_partout_admin"
-  );
-
-  document.getElementById(
-    "adminBar"
-  ).style.display =
-    "none";
-
-  showPage(
-    "homePage"
-  );
-
-  showNotice(
-    "Déconnexion réussie."
-  );
-
+  document.getElementById("adminBar").style.display = "none";
+  showPage("homePage");
+  showNotice("Déconnexion réussie.");
 }
-
 
 /* =========================================================
    IMAGE PREVIEW
 ========================================================= */
 
 function previewSelectedImage(event){
-
-  const file =
-    event.target.files[0];
-
-  if(!file){
-
-    return;
-
-  }
-
-  const preview =
-    document.getElementById(
-      "imagePreview"
-    );
-
-  preview.src =
-    URL.createObjectURL(
-      file
-    );
-
-  preview.style.display =
-    "block";
-
+  const file = event.target.files[0];
+  if(!file) return;
+  const preview = document.getElementById("imagePreview");
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
 }
-
 
 function cameraImageSelected(event){
-
-  const file =
-    event.target.files[0];
-
-  if(!file){
-
-    return;
-
-  }
-
-  const preview =
-    document.getElementById(
-      "imagePreview"
-    );
-
-  preview.src =
-    URL.createObjectURL(
-      file
-    );
-
-  preview.style.display =
-    "block";
-
+  const file = event.target.files[0];
+  if(!file) return;
+  cameraFile = file;
+  const preview = document.getElementById("imagePreview");
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
 }
-
 
 /* =========================================================
    RESIZE IMAGE
 ========================================================= */
 
-function resizeImage(
-  file,
-  maxWidth=1600,
-  quality=.82
-){
+function resizeImage(file, maxWidth = 1600, quality = .82){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
 
-  return new Promise(
-    function(resolve,reject){
+    reader.onload = function(event){
+      const img = new Image();
 
-      const reader =
-        new FileReader();
+      img.onload = function(){
+        let width = img.width;
+        let height = img.height;
 
-      reader.onload =
-        function(event){
+        if(width > maxWidth){
+          height = height * maxWidth / width;
+          width = maxWidth;
+        }
 
-          const img =
-            new Image();
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
 
-          img.onload =
-            function(){
+        canvas.toBlob(
+          blob => blob ? resolve(blob) : reject(new Error("Image impossible à traiter")),
+          "image/jpeg",
+          quality
+        );
+      };
 
-              let width =
-                img.width;
+      img.onerror = reject;
+      img.src = event.target.result;
+    };
 
-              let height =
-                img.height;
-
-              if(width > maxWidth){
-
-                height =
-                  height *
-                  maxWidth /
-                  width;
-
-                width =
-                  maxWidth;
-
-              }
-
-              const canvas =
-                document.createElement(
-                  "canvas"
-                );
-
-              canvas.width =
-                width;
-
-              canvas.height =
-                height;
-
-              const ctx =
-                canvas.getContext(
-                  "2d"
-                );
-
-              ctx.drawImage(
-                img,
-                0,
-                0,
-                width,
-                height
-              );
-
-              canvas.toBlob(
-                function(blob){
-
-                  if(blob){
-
-                    resolve(blob);
-
-                  }
-                  else{
-
-                    reject(
-                      new Error(
-                        "Image impossible à traiter"
-                      )
-                    );
-
-                  }
-
-                },
-                "image/jpeg",
-                quality
-              );
-
-            };
-
-          img.onerror =
-            reject;
-
-          img.src =
-            event.target.result;
-
-        };
-
-      reader.onerror =
-        reject;
-
-      reader.readAsDataURL(
-        file
-      );
-
-    }
-  );
-
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
-
 
 /* =========================================================
    UPLOAD IMAGE
 ========================================================= */
 
 async function uploadImage(file){
+  const resized = await resizeImage(file);
+  const filename = Date.now() + "_" + Math.random().toString(36).substring(2) + ".jpg";
+  const path = "news/" + filename;
 
-  const resized =
-    await resizeImage(
-      file
-    );
-
-  const filename =
-    Date.now() +
-    "_" +
-    Math.random()
-      .toString(36)
-      .substring(2) +
-    ".jpg";
-
-  const path =
-    "news/" +
-    filename;
-
-  const result =
-    await supabaseClient
+  const result = await supabaseClient
     .storage
     .from(STORAGE_BUCKET)
-    .upload(
-      path,
-      resized,
-      {
-        contentType:
-          "image/jpeg",
-        upsert:false
-      }
-    );
+    .upload(path, resized, { contentType:"image/jpeg", upsert:false });
 
-  if(result.error){
+  if(result.error) throw result.error;
 
-    throw result.error;
-
-  }
-
-  const publicResult =
-    supabaseClient
-    .storage
-    .from(STORAGE_BUCKET)
-    .getPublicUrl(
-      path
-    );
-
-  return publicResult
-    .data
-    .publicUrl;
-
+  const publicResult = supabaseClient.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+  return publicResult.data.publicUrl;
 }
-
 
 /* =========================================================
    PUBLISH NEWS
 ========================================================= */
 
 async function publishNews(event){
-
   event.preventDefault();
 
   if(!isAdmin){
-
-    showNotice(
-      "Accès administrateur requis."
-    );
-
+    showNotice("Accès administrateur requis.");
     return;
-
   }
 
-  const title =
-    document.getElementById(
-      "newsTitle"
-    ).value.trim();
+  const title = document.getElementById("newsTitle").value.trim();
+  const category = document.getElementById("newsCategory").value;
+  const summary = document.getElementById("newsSummary").value.trim();
+  const content = document.getElementById("newsContent").value.trim();
+  const imageInput = document.getElementById("newsImage");
+  const message = document.getElementById("publishMessage");
 
-  const category =
-    document.getElementById(
-      "newsCategory"
-    ).value;
+  message.textContent = "Publication en cours...";
 
-  const summary =
-    document.getElementById(
-      "newsSummary"
-    ).value.trim();
+  try {
+    let imageUrl = null;
 
-  const content =
-    document.getElementById(
-      "newsContent"
-    ).value.trim();
+    const fileToUpload = (imageInput.files && imageInput.files[0]) || cameraFile;
 
-  const imageInput =
-    document.getElementById(
-      "newsImage"
-    );
-
-  const message =
-    document.getElementById(
-      "publishMessage"
-    );
-
-  message.textContent =
-    "Publication en cours...";
-
-  try{
-
-    let imageUrl =
-      null;
-
-    if(
-      imageInput.files &&
-      imageInput.files[0]
-    ){
-
-      message.textContent =
-        "Téléchargement de l'image...";
-
-      imageUrl =
-        await uploadImage(
-          imageInput.files[0]
-        );
-
+    if(fileToUpload){
+      message.textContent = "Téléchargement de l'image...";
+      imageUrl = await uploadImage(fileToUpload);
     }
 
-    message.textContent =
-      "Publication de la nouvelle...";
+    message.textContent = "Publication de la nouvelle...";
 
-    const result =
-      await supabaseClient
+    const result = await supabaseClient
       .from("news")
       .insert({
-
-        title:title,
-
-        category:category,
-
-        summary:summary,
-
-        content:content,
-
-        image_url:imageUrl
-
+        title: title,
+        category: category,
+        summary: summary,
+        content: content,
+        image_url: imageUrl
       })
       .select()
       .single();
 
-    if(result.error){
+    if(result.error) throw result.error;
 
-      throw result.error;
+    message.textContent = "✅ Nouvelle publiée avec succès !";
 
-    }
-
-    message.textContent =
-      "✅ Nouvelle publiée avec succès !";
-
-    document
-      .getElementById(
-        "publishForm"
-      )
-      .reset();
-
-    document.getElementById(
-      "imagePreview"
-    ).style.display =
-      "none";
+    document.getElementById("publishForm").reset();
+    document.getElementById("imagePreview").style.display = "none";
+    cameraFile = null;
 
     await loadNews();
+    showNotice("Nouvelle publiée !");
 
-    showNotice(
-      "Nouvelle publiée !"
-    );
-
-    setTimeout(function(){
-
-      showPage(
-        "homePage"
-      );
-
-    },800);
-
-  }
-  catch(error){
-
+    setTimeout(() => showPage("homePage"), 800);
+  } catch(error){
     console.error(error);
-
-    message.textContent =
-      "❌ Erreur : " +
-      (
-        error.message ||
-        "publication impossible"
-      );
-
+    message.textContent = "❌ Erreur : " + (error.message || "publication impossible");
   }
-
 }
 
+/* =========================================================
+   EDIT / DELETE
+========================================================= */
+
+async function updateNews(id, updates){
+  if(!isAdmin){
+    showNotice("Accès administrateur requis.");
+    return;
+  }
+
+  const result = await supabaseClient.from("news").update(updates).eq("id", id);
+
+  if(result.error){
+    console.error(result.error);
+    showNotice("Modification impossible.");
+    return;
+  }
+
+  showNotice("✅ Nouvelle modifiée.");
+  await loadNews();
+  await openArticle(id);
+}
+
+async function editArticle(id){
+  const article = allNews.find(a => String(a.id) === String(id));
+  if(!article) return;
+
+  const newTitle = prompt("Nouveau titre :", article.title);
+  if(newTitle === null) return;
+
+  const newSummary = prompt("Nouveau résumé :", article.summary || "");
+  if(newSummary === null) return;
+
+  const newContent = prompt("Nouveau contenu :", article.content || "");
+  if(newContent === null) return;
+
+  await updateNews(id, {
+    title: newTitle.trim(),
+    summary: newSummary.trim(),
+    content: newContent.trim()
+  });
+}
+
+async function deleteNews(id){
+  if(!isAdmin){
+    showNotice("Accès administrateur requis.");
+    return;
+  }
+
+  if(!confirm("Supprimer définitivement cette nouvelle ?")) return;
+
+  const result = await supabaseClient.from("news").delete().eq("id", id);
+
+  if(result.error){
+    console.error(result.error);
+    showNotice("Suppression impossible.");
+    return;
+  }
+
+  showNotice("✅ Nouvelle supprimée.");
+  history.replaceState(null, "", window.location.pathname);
+  await loadNews();
+  showPage("homePage");
+}
 
 /* =========================================================
    VISITS
 ========================================================= */
 
 async function registerVisit(){
+  // Une seule visite par session navigateur
+  if(sessionStorage.getItem("cp_visit_registered")) return;
+  sessionStorage.setItem("cp_visit_registered", "1");
 
-  try{
-
-    await supabaseClient
-    .from("site_visits")
-    .insert({
-
-      visited_at:
-        new Date().toISOString()
-
+  try {
+    await supabaseClient.from("site_visits").insert({
+      visited_at: new Date().toISOString()
     });
-
+  } catch(error){
+    console.log("Visit tracking:", error);
   }
-  catch(error){
-
-    console.log(
-      "Visit tracking:",
-      error
-    );
-
-  }
-
 }
-
 
 /* =========================================================
    ONLINE SESSION
 ========================================================= */
 
 async function startOnlineSession(){
-
-  try{
-
-    sessionId =
-      localStorage.getItem(
-        "camera_partout_session"
-      );
+  try {
+    sessionId = localStorage.getItem("camera_partout_session");
 
     if(!sessionId){
-
-      sessionId =
-        crypto.randomUUID();
-
-      localStorage.setItem(
-        "camera_partout_session",
-        sessionId
-      );
-
+      sessionId = (crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : "s_" + Date.now() + Math.random().toString(36).slice(2);
+      localStorage.setItem("camera_partout_session", sessionId);
     }
 
-    await supabaseClient
-      .from("online_sessions")
-      .upsert(
-        {
-          session_id:
-            sessionId,
-
-          last_seen:
-            new Date().toISOString()
-        },
-        {
-          onConflict:
-            "session_id"
-        }
-      );
-
-  }
-  catch(error){
-
-    console.log(
-      "Online session:",
-      error
+    await supabaseClient.from("online_sessions").upsert(
+      { session_id: sessionId, last_seen: new Date().toISOString() },
+      { onConflict:"session_id" }
     );
-
+  } catch(error){
+    console.log("Online session:", error);
   }
-
 }
-
 
 async function heartbeatSession(){
-
-  if(!sessionId){
-
-    return;
-
-  }
-
-  try{
-
-    await supabaseClient
-      .from("online_sessions")
-      .upsert(
-        {
-          session_id:
-            sessionId,
-
-          last_seen:
-            new Date().toISOString()
-        },
-        {
-          onConflict:
-            "session_id"
-        }
-      );
-
-  }
-  catch(error){
-
-    console.log(error);
-
-  }
-
+  if(!sessionId) return;
+  try {
+    await supabaseClient.from("online_sessions").upsert(
+      { session_id: sessionId, last_seen: new Date().toISOString() },
+      { onConflict:"session_id" }
+    );
+  } catch(error){ console.log(error); }
 }
-
 
 /* =========================================================
    ANALYTICS
 ========================================================= */
 
 async function loadAnalytics(){
+  if(!isAdmin) return;
 
-  if(!isAdmin){
+  try {
+    const newsResult = await supabaseClient.from("news").select("id", { count:"exact", head:true });
+    const subscribersResult = await supabaseClient.from("subscribers").select("id", { count:"exact", head:true });
+    const visitsResult = await supabaseClient.from("site_visits").select("id", { count:"exact", head:true });
 
-    return;
+    const now = new Date();
+    const oldTime = new Date(now.getTime() - 5 * 60 * 1000).toISOString();
 
-  }
-
-  try{
-
-    const newsResult =
-      await supabaseClient
-      .from("news")
-      .select(
-        "id",
-        {
-          count:"exact",
-          head:true
-        }
-      );
-
-    const subscribersResult =
-      await supabaseClient
-      .from("subscribers")
-      .select(
-        "id",
-        {
-          count:"exact",
-          head:true
-        }
-      );
-
-    const visitsResult =
-      await supabaseClient
-      .from("site_visits")
-      .select(
-        "id",
-        {
-          count:"exact",
-          head:true
-        }
-      );
-
-    const now =
-      new Date();
-
-    const oldTime =
-      new Date(
-        now.getTime() -
-        5 * 60 * 1000
-      ).toISOString();
-
-    const onlineResult =
-      await supabaseClient
+    const onlineResult = await supabaseClient
       .from("online_sessions")
-      .select(
-        "session_id",
-        {
-          count:"exact",
-          head:true
-        }
-      )
-      .gte(
-        "last_seen",
-        oldTime
-      );
+      .select("session_id", { count:"exact", head:true })
+      .gte("last_seen", oldTime);
 
-    document.getElementById(
-      "totalNews"
-    ).textContent =
-      newsResult.count || 0;
-
-    document.getElementById(
-      "totalSubscribers"
-    ).textContent =
-      subscribersResult.count || 0;
-
-    document.getElementById(
-      "totalVisits"
-    ).textContent =
-      visitsResult.count || 0;
-
-    document.getElementById(
-      "onlineUsers"
-    ).textContent =
-      onlineResult.count || 0;
+    document.getElementById("totalNews").textContent = newsResult.count || 0;
+    document.getElementById("totalSubscribers").textContent = subscribersResult.count || 0;
+    document.getElementById("totalVisits").textContent = visitsResult.count || 0;
+    document.getElementById("onlineUsers").textContent = onlineResult.count || 0;
 
     await loadVisitChart();
-
+  } catch(error){
+    console.error("Analytics:", error);
   }
-  catch(error){
-
-    console.error(
-      "Analytics:",
-      error
-    );
-
-  }
-
 }
-
 
 /* =========================================================
    VISIT CHART
 ========================================================= */
 
 async function loadVisitChart(){
+  const chart = document.getElementById("chartBars");
+  if(!chart) return;
 
-  const chart =
-    document.getElementById(
-      "chartBars"
-    );
+  try {
+    const now = new Date();
+    const start = new Date(now.getTime() - 29 * 24 * 60 * 60 * 1000);
 
-  if(!chart){
-
-    return;
-
-  }
-
-  try{
-
-    const now =
-      new Date();
-
-    const start =
-      new Date(
-        now.getTime() -
-        29 * 24 * 60 * 60 * 1000
-      );
-
-    const result =
-      await supabaseClient
+    const result = await supabaseClient
       .from("site_visits")
-      .select(
-        "visited_at"
-      )
-      .gte(
-        "visited_at",
-        start.toISOString()
-      );
+      .select("visited_at")
+      .gte("visited_at", start.toISOString());
 
-    if(result.error){
-
-      throw result.error;
-
-    }
+    if(result.error) throw result.error;
 
     const counts = {};
-
-    for(
-      let i=0;
-      i<30;
-      i++
-    ){
-
-      const date =
-        new Date(
-          start.getTime() +
-          i * 24 * 60 * 60 * 1000
-        );
-
-      const key =
-        date.toISOString()
-        .slice(0,10);
-
+    for(let i = 0; i < 30; i++){
+      const date = new Date(start.getTime() + i * 24 * 60 * 60 * 1000);
+      const key = date.toISOString().slice(0, 10);
       counts[key] = 0;
-
     }
 
-    (result.data || [])
-      .forEach(function(item){
+    (result.data || []).forEach(item => {
+      const key = new Date(item.visited_at).toISOString().slice(0, 10);
+      if(counts[key] !== undefined) counts[key]++;
+    });
 
-        const key =
-          new Date(
-            item.visited_at
-          )
-          .toISOString()
-          .slice(0,10);
+    const values = Object.values(counts);
+    const max = Math.max(...values, 1);
 
-        if(
-          counts[key] !== undefined
-        ){
-
-          counts[key]++;
-
-        }
-
-      });
-
-    const values =
-      Object.values(
-        counts
-      );
-
-    const max =
-      Math.max(
-        ...values,
-        1
-      );
-
-    chart.innerHTML =
-      Object.entries(
-        counts
-      )
-      .map(function(entry){
-
-        const key =
-          entry[0];
-
-        const value =
-          entry[1];
-
-        const height =
-          Math.max(
-            3,
-            (value / max) * 190
-          );
-
-        const label =
-          key.slice(5);
-
-        return `
-
-          <div class="bar-wrap">
-
-            <div
-              class="bar"
-              style="height:${height}px"
-              title="${value} visite(s)"
-            ></div>
-
-            <div class="bar-label">
-              ${label}
-            </div>
-
-          </div>
-
-        `;
-
-      })
-      .join("");
-
+    chart.innerHTML = Object.entries(counts).map(([key, value]) => {
+      const height = Math.max(3, (value / max) * 190);
+      const label = key.slice(5);
+      return `
+        <div class="bar-wrap">
+          <div class="bar" style="height:${height}px" title="${value} visite(s)"></div>
+          <div class="bar-label">${label}</div>
+        </div>
+      `;
+    }).join("");
+  } catch(error){
+    console.error("Chart:", error);
+    chart.innerHTML = `<div class="loading">Statistiques indisponibles.</div>`;
   }
-  catch(error){
-
-    console.error(
-      "Chart:",
-      error
-    );
-
-    chart.innerHTML =
-      `<div class="loading">
-        Les statistiques détaillées ne sont pas disponibles.
-      </div>`;
-
-  }
-
 }
 
-
 /* =========================================================
-   RESET SEARCH WHEN RETURNING HOME
+   POPSTATE
 ========================================================= */
 
-window.addEventListener(
-  "popstate",
-  function(){
-
-    const params =
-      new URLSearchParams(
-        window.location.search
-      );
-
-    const postId =
-      params.get("post");
-
-    if(postId){
-
-      openArticle(postId);
-
-    }
-    else{
-
-      showPage(
-        "homePage"
-      );
-
-    }
-
-  }
-);
-
+window.addEventListener("popstate", function(){
+  const params = new URLSearchParams(window.location.search);
+  const postId = params.get("post");
+  if(postId) openArticle(postId);
+  else showPage("homePage");
+});
 
 /* =========================================================
    YOUTUBE LIVE
 ========================================================= */
 
 function refreshYouTubeLive(){
-
-  const iframe =
-    document.querySelector(
-      "#youtubeLiveSection iframe"
-    );
-
-  if(!iframe){
-
-    return;
-
-  }
-
-  iframe.src =
-    "https://www.youtube.com/embed/live_stream?channel=" +
-    YOUTUBE_CHANNEL_ID;
-
+  const iframe = document.querySelector("#youtubeLiveSection iframe");
+  if(!iframe) return;
+  iframe.src = "https://www.youtube.com/embed/live_stream?channel=" + YOUTUBE_CHANNEL_ID;
 }
 
-
 /* =========================================================
-   CONSOLE INFO
+   AUTH STATE
 ========================================================= */
 
-console.log(
-  "CAMERA PARTOUT chargé avec succès."
-);
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  isAdmin = !!session;
+  const bar = document.getElementById("adminBar");
+  if(bar) bar.style.display = session ? "block" : "none";
+});
 
-console.log(
-  "YouTube Channel ID:",
-  YOUTUBE_CHANNEL_ID
-);
-
+console.log("CAMERA PARTOUT chargé.");
+console.log("YouTube Channel ID:", YOUTUBE_CHANNEL_ID);
 </script>
 
 </body>
