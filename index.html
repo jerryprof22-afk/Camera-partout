@@ -6,6 +6,9 @@
 
 <title>CAMERA PARTOUT</title>
 
+<!-- LOGO / FAVICON -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect x='2' y='13' width='44' height='31' rx='8' fill='%23e50914'/%3E%3Cpath d='M15 13l3.5-7h11l3.5 7z' fill='%23e50914'/%3E%3Ccircle cx='24' cy='29' r='11' fill='%23fff'/%3E%3Ccircle cx='24' cy='29' r='6.5' fill='%2307152f'/%3E%3C/svg%3E">
+
 <meta property="og:title" content="CAMERA PARTOUT">
 <meta property="og:description" content="L'information partout, à tout moment.">
 <meta property="og:type" content="website">
@@ -78,18 +81,48 @@ header{
   gap:15px;
 }
 
-/* LOGO */
+/* =========================================================
+   LOGO
+========================================================= */
+
 .logo{
   display:flex;
   align-items:center;
-  width:240px;
+  flex:0 0 auto;
 }
 
-.logo img{
-  width:240px;
-  height:auto;
+.logo-mark{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:none;
+  border:0;
+  padding:0;
+  color:#fff;
+  text-decoration:none;
+  line-height:1;
+}
+
+.logo-icon{
+  width:46px;
+  height:46px;
+  flex:0 0 auto;
   display:block;
-  object-fit:contain;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.35));
+}
+
+.logo-text{
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:.5px;
+  white-space:nowrap;
+  color:#fff;
+}
+
+.logo-text b{
+  color:var(--red);
+  margin-left:6px;
+  font-weight:900;
 }
 
 /* LIVE */
@@ -115,7 +148,7 @@ nav{
   background:#fff;
   border-bottom:3px solid var(--blue);
   position:sticky;
-  top:70px;
+  top:66px;
   z-index:999;
   box-shadow:0 2px 7px rgba(0,0,0,.08);
 }
@@ -187,11 +220,48 @@ nav{
   display:block;
 }
 
+/* =========================================================
+   HERO + IMAGE D'EN-TÊTE
+========================================================= */
+
 .hero{
+  position:relative;
   background:linear-gradient(135deg,var(--dark),var(--blue));
+  background-size:cover;
+  background-position:center center;
+  background-repeat:no-repeat;
   color:#fff;
   padding:55px 20px;
   text-align:center;
+  overflow:hidden;
+}
+
+.hero.has-image{
+  min-height:360px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* voile de lisibilité quand une image est présente */
+.hero.has-image::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    135deg,
+    rgba(7,21,47,.80),
+    rgba(7,87,201,.62)
+  );
+  z-index:1;
+}
+
+.hero-inner{
+  position:relative;
+  z-index:2;
+  width:100%;
+  max-width:1000px;
+  margin:auto;
 }
 
 .hero h1{
@@ -591,6 +661,23 @@ nav{
   background:var(--blue);
 }
 
+/* Aperçu bannière dans l'admin */
+.hero-preview{
+  width:100%;
+  max-height:260px;
+  object-fit:cover;
+  border-radius:8px;
+  margin:10px 0;
+  border:2px dashed var(--blue);
+}
+
+.button-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:6px;
+}
+
 /* =========================================================
    ANALYTICS
 ========================================================= */
@@ -680,10 +767,13 @@ footer{
   margin-bottom:15px;
 }
 
-.footer-logo img{
-  width:230px;
-  max-width:80%;
-  height:auto;
+.footer-logo .logo-icon{
+  width:56px;
+  height:56px;
+}
+
+.footer-logo .logo-text{
+  font-size:26px;
 }
 
 .footer-links{
@@ -762,12 +852,17 @@ footer{
     padding:8px 12px;
   }
 
-  .logo{
-    width:155px;
+  .logo-icon{
+    width:34px;
+    height:34px;
   }
 
-  .logo img{
-    width:155px;
+  .logo-text{
+    font-size:16px;
+  }
+
+  .logo-text b{
+    margin-left:4px;
   }
 
   .header-live{
@@ -776,7 +871,7 @@ footer{
   }
 
   nav{
-    top:59px;
+    top:50px;
   }
 
   .nav-inner button{
@@ -786,6 +881,10 @@ footer{
 
   .hero{
     padding:35px 15px;
+  }
+
+  .hero.has-image{
+    min-height:250px;
   }
 
   .hero h1{
@@ -824,8 +923,13 @@ footer{
     grid-template-columns:1fr;
   }
 
-  .footer-logo img{
-    width:180px;
+  .footer-logo .logo-icon{
+    width:42px;
+    height:42px;
+  }
+
+  .footer-logo .logo-text{
+    font-size:19px;
   }
 }
 </style>
@@ -840,8 +944,24 @@ footer{
 <header>
   <div class="header-inner">
 
+    <!-- LOGO -->
     <div class="logo">
-      <img src="logo.png" alt="CAMERA PARTOUT">
+      <button class="logo-mark" onclick="goHome()" type="button" aria-label="CAMERA PARTOUT - Accueil">
+
+        <svg class="logo-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <rect x="2" y="13" width="44" height="31" rx="8" fill="#e50914"/>
+          <path d="M15 13l3.5-7h11l3.5 7z" fill="#e50914"/>
+          <circle cx="24" cy="29" r="11" fill="#ffffff"/>
+          <circle cx="24" cy="29" r="6.5" fill="#07152f"/>
+          <circle cx="27" cy="26" r="2" fill="#ffffff" opacity=".85"/>
+          <circle cx="39" cy="20" r="2.2" fill="#ffffff" opacity=".9"/>
+        </svg>
+
+        <span class="logo-text">
+          CAMERA<b>PARTOUT</b>
+        </span>
+
+      </button>
     </div>
 
     <button class="header-live" onclick="showLive()">
@@ -923,15 +1043,19 @@ footer{
 
 <main id="homePage" class="page active">
 
-  <section class="hero">
+  <section class="hero" id="heroSection">
 
-    <h1>
-      CAMERA <span>PARTOUT</span>
-    </h1>
+    <div class="hero-inner">
 
-    <p>
-      L'information partout, à tout moment.
-    </p>
+      <h1>
+        CAMERA <span>PARTOUT</span>
+      </h1>
+
+      <p>
+        L'information partout, à tout moment.
+      </p>
+
+    </div>
 
   </section>
 
@@ -1216,6 +1340,10 @@ footer{
           📝 Publier une nouvelle
         </button>
 
+        <button onclick="showPage('headerImagePage')">
+          🖼️ Image d'en-tête
+        </button>
+
         <button onclick="showPage('analyticsPage'); loadAnalytics()">
           📊 Statistiques
         </button>
@@ -1249,6 +1377,95 @@ footer{
           </span>
         </p>
 
+      </div>
+
+    </div>
+
+  </div>
+
+</main>
+
+<!-- =========================================================
+     HEADER IMAGE PAGE (NOUVEAU)
+========================================================= -->
+
+<main id="headerImagePage" class="page">
+
+  <div class="container">
+
+    <div class="form-card">
+
+      <button
+        class="back-button"
+        onclick="showPage('adminPage')">
+        ← Administration
+      </button>
+
+      <h2>
+        🖼️ Image d'en-tête
+      </h2>
+
+      <p style="margin:10px 0 18px;">
+        Cette image s'affiche en haut de la page d'accueil,
+        derrière le titre <strong>CAMERA PARTOUT</strong>.
+        Format conseillé : 1600 × 600 px (paysage).
+      </p>
+
+      <div class="form-group">
+
+        <label>
+          Choisir une image depuis l'appareil
+        </label>
+
+        <input
+          type="file"
+          id="heroImageInput"
+          accept="image/*"
+          onchange="heroImageSelected(event)"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>
+          Ou prendre une photo
+        </label>
+
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onchange="heroImageSelected(event)"
+        >
+
+      </div>
+
+      <img
+        id="heroImagePreview"
+        class="hero-preview"
+        style="display:none;"
+        alt="Aperçu de l'image d'en-tête">
+
+      <div class="button-row">
+
+        <button
+          class="primary-button"
+          onclick="saveHeroImage()">
+          💾 Publier l'image d'en-tête
+        </button>
+
+        <button
+          class="secondary-button"
+          onclick="removeHeroImage()">
+          🗑️ Retirer l'image
+        </button>
+
+      </div>
+
+      <div
+        id="heroImageMessage"
+        class="message">
       </div>
 
     </div>
@@ -1486,11 +1703,25 @@ footer{
 
   <div class="footer-inner">
 
+    <!-- LOGO -->
     <div class="footer-logo">
 
-      <img
-        src="logo.png"
-        alt="CAMERA PARTOUT">
+      <div class="logo-mark" aria-label="CAMERA PARTOUT">
+
+        <svg class="logo-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <rect x="2" y="13" width="44" height="31" rx="8" fill="#e50914"/>
+          <path d="M15 13l3.5-7h11l3.5 7z" fill="#e50914"/>
+          <circle cx="24" cy="29" r="11" fill="#ffffff"/>
+          <circle cx="24" cy="29" r="6.5" fill="#07152f"/>
+          <circle cx="27" cy="26" r="2" fill="#ffffff" opacity=".85"/>
+          <circle cx="39" cy="20" r="2.2" fill="#ffffff" opacity=".9"/>
+        </svg>
+
+        <span class="logo-text">
+          CAMERA<b>PARTOUT</b>
+        </span>
+
+      </div>
 
     </div>
 
@@ -1550,6 +1781,10 @@ const STORAGE_BUCKET =
 const YOUTUBE_CHANNEL_ID =
 "UCMYXOsiihaa3yW_TZFb3vXA";
 
+/* Clé utilisée dans la table site_settings */
+const HERO_IMAGE_KEY =
+"hero_image";
+
 const supabaseClient =
 window.supabase.createClient(
   SUPABASE_URL,
@@ -1567,6 +1802,10 @@ let isAdmin = false;
 let sessionId = null;
 let cameraFile = null;
 
+/* Image d'en-tête */
+let heroFile = null;
+let heroImageUrl = "";
+
 const DEFAULT_SECTION_TITLE =
 "📰 Dernières actualités";
 
@@ -1583,6 +1822,9 @@ document.addEventListener(
       "currentYear"
     ).textContent =
       new Date().getFullYear();
+
+    /* Charge l'image d'en-tête (publique) */
+    await loadSiteSettings();
 
     await loadNews();
 
@@ -1708,6 +1950,12 @@ function showPage(pageId, btn){
       );
 
     }
+
+  }
+
+  if(pageId === "headerImagePage"){
+
+    refreshHeroPreview();
 
   }
 
@@ -1838,6 +2086,358 @@ function showNotice(message){
     },
     3500
   );
+
+}
+
+
+/* =========================================================
+   IMAGE D'EN-TÊTE — CHARGEMENT
+========================================================= */
+
+async function loadSiteSettings(){
+
+  try{
+
+    const result =
+      await supabaseClient
+        .from("site_settings")
+        .select("value")
+        .eq("key", HERO_IMAGE_KEY)
+        .maybeSingle();
+
+    if(result.error){
+      throw result.error;
+    }
+
+    const url =
+      result.data &&
+      result.data.value
+      ?
+      result.data.value
+      :
+      "";
+
+    applyHeroImage(url);
+
+  }catch(error){
+
+    console.log(
+      "site_settings indisponible :",
+      error.message || error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   IMAGE D'EN-TÊTE — APPLICATION
+========================================================= */
+
+function applyHeroImage(url){
+
+  heroImageUrl =
+    url || "";
+
+  const hero =
+    document.getElementById(
+      "heroSection"
+    );
+
+  if(!hero){
+    return;
+  }
+
+  if(heroImageUrl){
+
+    hero.style.backgroundImage =
+      'url("' + heroImageUrl + '")';
+
+    hero.classList.add("has-image");
+
+  }else{
+
+    hero.style.backgroundImage =
+      "";
+
+    hero.classList.remove("has-image");
+
+  }
+
+}
+
+
+/* =========================================================
+   IMAGE D'EN-TÊTE — SÉLECTION
+========================================================= */
+
+function heroImageSelected(event){
+
+  const file =
+    event.target.files &&
+    event.target.files[0];
+
+  if(!file){
+    return;
+  }
+
+  heroFile =
+    file;
+
+  const preview =
+    document.getElementById(
+      "heroImagePreview"
+    );
+
+  if(preview){
+
+    preview.src =
+      URL.createObjectURL(file);
+
+    preview.style.display =
+      "block";
+
+  }
+
+  const message =
+    document.getElementById(
+      "heroImageMessage"
+    );
+
+  if(message){
+    message.textContent =
+      "Image sélectionnée. Cliquez sur « Publier l'image d'en-tête ».";
+  }
+
+}
+
+
+/* Affiche l'image actuellement en ligne dans l'admin */
+function refreshHeroPreview(){
+
+  const preview =
+    document.getElementById(
+      "heroImagePreview"
+    );
+
+  if(!preview){
+    return;
+  }
+
+  if(heroFile){
+    return;
+  }
+
+  if(heroImageUrl){
+
+    preview.src =
+      heroImageUrl;
+
+    preview.style.display =
+      "block";
+
+  }else{
+
+    preview.style.display =
+      "none";
+
+  }
+
+}
+
+
+/* =========================================================
+   IMAGE D'EN-TÊTE — PUBLIER
+========================================================= */
+
+async function saveHeroImage(){
+
+  if(!isAdmin){
+
+    showNotice(
+      "Accès administrateur requis."
+    );
+
+    return;
+
+  }
+
+  const message =
+    document.getElementById(
+      "heroImageMessage"
+    );
+
+  if(!heroFile){
+
+    if(message){
+      message.textContent =
+        "❌ Choisissez d'abord une image.";
+    }
+
+    return;
+
+  }
+
+  if(message){
+    message.textContent =
+      "Téléchargement de l'image...";
+  }
+
+  try{
+
+    const url =
+      await uploadImage(
+        heroFile,
+        "header"
+      );
+
+    const result =
+      await supabaseClient
+        .from("site_settings")
+        .upsert(
+          {
+            key: HERO_IMAGE_KEY,
+            value: url,
+            updated_at:
+              new Date().toISOString()
+          },
+          {
+            onConflict: "key"
+          }
+        );
+
+    if(result.error){
+      throw result.error;
+    }
+
+    applyHeroImage(url);
+
+    heroFile =
+      null;
+
+    const input =
+      document.getElementById(
+        "heroImageInput"
+      );
+
+    if(input){
+      input.value = "";
+    }
+
+    refreshHeroPreview();
+
+    if(message){
+      message.textContent =
+        "✅ Image d'en-tête publiée avec succès !";
+    }
+
+    showNotice(
+      "Image d'en-tête publiée !"
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    if(message){
+
+      message.textContent =
+        "❌ Erreur : " +
+        (
+          error.message ||
+          "publication impossible"
+        ) +
+        " — vérifiez que la table « site_settings » existe.";
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   IMAGE D'EN-TÊTE — SUPPRIMER
+========================================================= */
+
+async function removeHeroImage(){
+
+  if(!isAdmin){
+
+    showNotice(
+      "Accès administrateur requis."
+    );
+
+    return;
+
+  }
+
+  if(
+    !confirm(
+      "Retirer l'image d'en-tête du site ?"
+    )
+  ){
+    return;
+  }
+
+  const message =
+    document.getElementById(
+      "heroImageMessage"
+    );
+
+  try{
+
+    const result =
+      await supabaseClient
+        .from("site_settings")
+        .delete()
+        .eq("key", HERO_IMAGE_KEY);
+
+    if(result.error){
+      throw result.error;
+    }
+
+    heroFile =
+      null;
+
+    applyHeroImage("");
+
+    const preview =
+      document.getElementById(
+        "heroImagePreview"
+      );
+
+    if(preview){
+      preview.style.display =
+        "none";
+    }
+
+    if(message){
+      message.textContent =
+        "✅ Image d'en-tête retirée.";
+    }
+
+    showNotice(
+      "Image d'en-tête retirée."
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    if(message){
+
+      message.textContent =
+        "❌ Erreur : " +
+        (
+          error.message ||
+          "suppression impossible"
+        );
+
+    }
+
+  }
 
 }
 
@@ -2797,7 +3397,7 @@ async function logoutAdmin(){
 
 
 /* =========================================================
-   IMAGE PREVIEW
+   IMAGE PREVIEW (NOUVELLES)
 ========================================================= */
 
 function previewSelectedImage(
@@ -2968,10 +3568,12 @@ function resizeImage(
 
 /* =========================================================
    UPLOAD IMAGE
+   folder : "news" (défaut) ou "header"
 ========================================================= */
 
 async function uploadImage(
-  file
+  file,
+  folder = "news"
 ){
 
   const resized =
@@ -2988,7 +3590,8 @@ async function uploadImage(
     ".jpg";
 
   const path =
-    "news/" +
+    folder +
+    "/" +
     filename;
 
   const result =
