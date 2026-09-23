@@ -81,18 +81,47 @@ nav{background:#fff;border-bottom:3px solid var(--blue);position:sticky;top:66px
 .search-box input{width:100%;padding:15px;border:1px solid #ccc;border-radius:8px;outline:none;font-size:16px}
 .search-box input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(7,87,201,.1)}
 
-/* YOUTUBE */
+/* YOUTUBE LIVE */
 .youtube-live{
   background:linear-gradient(135deg,#07152f,#111);color:#fff;border-radius:12px;
   padding:20px;margin:30px 0;box-shadow:0 5px 20px rgba(0,0,0,.2);border-top:4px solid var(--red);
 }
-.youtube-live h2{text-align:center;margin-bottom:10px}
-.live-title{text-align:center;color:#ff3333;font-weight:bold;margin-bottom:15px}
+.youtube-live.is-live{
+  box-shadow:0 0 0 2px var(--red), 0 8px 30px rgba(229,9,20,.45);
+  animation:liveGlow 2s ease-in-out infinite alternate;
+}
+@keyframes liveGlow{
+  from{box-shadow:0 0 0 2px var(--red), 0 8px 30px rgba(229,9,20,.35)}
+  to  {box-shadow:0 0 0 3px var(--red), 0 8px 40px rgba(229,9,20,.65)}
+}
+.youtube-live h2{
+  text-align:center;
+  margin-bottom:10px;
+  font-size:24px;
+  line-height:1.35;
+  word-wrap:break-word;
+  transition:.25s;
+}
+.youtube-live.is-live h2{
+  font-size:30px;
+  color:#fff;
+  font-weight:900;
+  letter-spacing:.3px;
+  text-shadow:0 2px 12px rgba(229,9,20,.65), 0 0 22px rgba(229,9,20,.45);
+  padding:0 10px;
+}
+.live-title{text-align:center;color:#ff3333;font-weight:bold;margin-bottom:15px;font-size:15px;letter-spacing:.5px}
 .live-dot{width:10px;height:10px;background:red;border-radius:50%;display:inline-block;margin-right:5px;animation:pulse 1s infinite}
-@keyframes pulse{0%{opacity:1}50%{opacity:.3}100%{opacity:1}}
+@keyframes pulse{0%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}100%{opacity:1;transform:scale(1)}}
 .youtube-player{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:10px;background:#000}
 .youtube-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .youtube-info{text-align:center;margin-top:12px;color:#ccc;font-size:14px}
+.youtube-fullscreen-btn{
+  display:block;margin:12px auto 0;background:var(--red);color:#fff;border:0;
+  padding:11px 22px;border-radius:7px;font-weight:bold;font-size:15px;
+  box-shadow:0 3px 10px rgba(229,9,20,.4);
+}
+.youtube-fullscreen-btn:hover{background:#b90710;transform:translateY(-1px)}
 
 /* NEWS */
 .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
@@ -188,6 +217,13 @@ footer{background:linear-gradient(90deg,var(--dark),#020914);color:#fff;margin-t
   display:flex;flex-direction:column;
 }
 .video-card:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.15)}
+.video-card.manual-live{
+  grid-column:1/-1;
+  border:2px solid var(--red);
+  box-shadow:0 0 0 2px rgba(229,9,20,.25), 0 6px 25px rgba(229,9,20,.35);
+}
+.video-card.manual-live .video-card-content{text-align:center;padding:16px}
+.video-card.manual-live h3{font-size:20px;color:var(--red)}
 .video-thumb{position:relative;aspect-ratio:16/9;background:#000;overflow:hidden}
 .video-thumb img{width:100%;height:100%;object-fit:cover;transition:.25s}
 .video-card:hover .video-thumb img{transform:scale(1.04)}
@@ -252,6 +288,7 @@ footer{background:linear-gradient(90deg,var(--dark),#020914);color:#fff;margin-t
   .admin-menu{grid-template-columns:1fr}
   .footer-logo .logo-icon{width:42px;height:42px}
   .footer-logo .logo-text{font-size:19px}
+  .youtube-live.is-live h2{font-size:21px}
 }
 </style>
 </head>
@@ -314,9 +351,9 @@ footer{background:linear-gradient(90deg,var(--dark),#020914);color:#fff;margin-t
     </div>
 
     <section class="youtube-live" id="youtubeLiveSection">
-      <h2>🔴 CAMERA PARTOUT — EN DIRECT</h2>
-      <div class="live-title">
-        <span class="live-dot"></span> LIVE YOUTUBE
+      <h2 id="liveMainTitle">🔴 CAMERA PARTOUT — EN DIRECT</h2>
+      <div class="live-title" id="liveStatusLabel">
+        <span class="live-dot"></span> CHAÎNE YOUTUBE
       </div>
       <div class="youtube-player">
         <iframe
@@ -324,11 +361,15 @@ footer{background:linear-gradient(90deg,var(--dark),#020914);color:#fff;margin-t
           src=""
           title="CAMERA PARTOUT - Live YouTube"
           frameborder="0"
-          allow="autoplay; encrypted-media; picture-in-picture; web-share"
+          allow="autoplay; encrypted-media; picture-in-picture; web-share; fullscreen"
           allowfullscreen>
         </iframe>
       </div>
-      <div class="youtube-info">
+      <button class="youtube-fullscreen-btn" id="liveFullscreenBtn"
+              onclick="goFullscreenLive()" style="display:none;">
+        ⛶ Voir le live en plein écran
+      </button>
+      <div class="youtube-info" id="liveInfo">
         Chargement du direct...
       </div>
     </section>
@@ -414,6 +455,7 @@ footer{background:linear-gradient(90deg,var(--dark),#020914);color:#fff;margin-t
       <div class="admin-menu">
         <button onclick="showPage('publishPage')">📝 Publier une nouvelle</button>
         <button onclick="showPage('headerImagePage')">🖼️ Image d'en-tête</button>
+        <button onclick="showPage('liveYoutubePage')">🔴 Live YouTube</button>
         <button onclick="showPage('analyticsPage'); loadAnalytics()">📊 Statistiques</button>
         <button onclick="loadNews()">🔄 Actualiser les nouvelles</button>
         <button onclick="forceRefreshYouTube()">🎬 Actualiser les vidéos YouTube</button>
@@ -451,6 +493,47 @@ footer{background:linear-gradient(90deg,var(--dark),#020914);color:#fff;margin-t
         <button class="secondary-button" onclick="removeHeroImage()">🗑️ Retirer l'image</button>
       </div>
       <div id="heroImageMessage" class="message"></div>
+    </div>
+  </div>
+</main>
+
+<main id="liveYoutubePage" class="page">
+  <div class="container">
+    <div class="form-card">
+      <button class="back-button" onclick="showPage('adminPage')">← Administration</button>
+      <h2>🔴 Live YouTube</h2>
+      <p style="margin:10px 0 18px;">
+        Collez ici le lien de votre live YouTube. Il s'affichera immédiatement
+        en haut de la page d'accueil, pour tous vos visiteurs, avec le badge
+        <strong>EN DIRECT</strong> et un bouton plein écran.
+      </p>
+
+      <div class="form-group">
+        <label>Lien du live YouTube</label>
+        <input type="text" id="liveUrlInput"
+          placeholder="https://www.youtube.com/watch?v=XXXXXXXXXXX">
+        <small style="color:#666;display:block;margin-top:6px;">
+          Formats acceptés : watch?v=… • youtu.be/… • /live/… • /embed/… • /shorts/…
+        </small>
+      </div>
+
+      <div class="button-row">
+        <button class="primary-button" onclick="saveLiveUrl()">🔴 Publier le live</button>
+        <button class="secondary-button" onclick="removeLiveUrl()">🗑️ Retirer le live</button>
+      </div>
+
+      <div id="liveUrlMessage" class="message"></div>
+
+      <div style="margin-top:20px;padding:12px;background:#f4f6f8;border-left:4px solid var(--blue);border-radius:6px;">
+        <strong>Comment faire :</strong>
+        <ol style="margin:8px 0 0 20px;line-height:1.8;">
+          <li>Lancez votre live sur YouTube</li>
+          <li>Copiez l'URL de la vidéo (celle qui ressemble à <em>youtube.com/watch?v=…</em>)</li>
+          <li>Collez-la ci-dessus et cliquez sur « Publier le live »</li>
+          <li>Le live apparaît immédiatement sur la page d'accueil</li>
+          <li>Dès la fin du live, cliquez sur « Retirer le live »</li>
+        </ol>
+      </div>
     </div>
   </div>
 </main>
@@ -551,7 +634,7 @@ footer{background:linear-gradient(90deg,var(--dark),#020914);color:#fff;margin-t
     <button class="video-modal-close" onclick="closeVideoModal()" type="button">✕ Fermer</button>
     <div class="video-modal-player">
       <iframe id="videoModalFrame" src="" title="Lecteur vidéo"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
         allowfullscreen></iframe>
     </div>
     <h3 id="videoModalTitle"></h3>
@@ -569,18 +652,14 @@ const SUPABASE_URL = "https://nioetezsutbxxrwpsexb.supabase.co";
 const SUPABASE_KEY = "sb_publishable_nB197b7wwsay5oqd1zsfxA_eHmDRDcH";
 const STORAGE_BUCKET = "news-images";
 
-/* ID de votre chaîne YouTube — déjà configuré */
 const YOUTUBE_CHANNEL_ID = "UCMYXOsiihaa3yW_TZFb3vXA";
-
-/* Playlist "uploads" : "UU" + ID sans les 2 premiers caractères */
 const YOUTUBE_UPLOADS_PLAYLIST_ID = "UU" + YOUTUBE_CHANNEL_ID.slice(2);
 
-/* Cache local */
-const YOUTUBE_CACHE_KEY = "cp_youtube_videos_v2";
-const YOUTUBE_CACHE_TTL = 5 * 60 * 1000; /* 5 min */
+const YOUTUBE_CACHE_KEY = "cp_youtube_videos_v3";
+const YOUTUBE_CACHE_TTL = 5 * 60 * 1000;
 
-/* Clé utilisée dans la table site_settings */
 const HERO_IMAGE_KEY = "hero_image";
+const LIVE_URL_KEY = "live_youtube_url";
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -588,6 +667,8 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
    VARIABLES
 ========================================================= */
 
+let manualLiveId = "";
+let manualLiveTitle = "";
 let allNews = [];
 let currentNews = null;
 let isAdmin = false;
@@ -603,16 +684,38 @@ let youtubeLoading = false;
 const DEFAULT_SECTION_TITLE = "📰 Dernières actualités";
 
 /* =========================================================
-   LISTE DE PROXYS CORS (bascule automatique si l'un échoue)
+   PROXY CORS (pour récupérer la liste des vidéos RSS)
 ========================================================= */
 
-const CORS_PROXIES = [
-  url => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
-  url => "https://corsproxy.io/?" + encodeURIComponent(url),
-  url => "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(url),
-  url => "https://thingproxy.freeboard.io/fetch/" + url,
-  url => "https://proxy.cors.sh/" + url
-];
+async function proxyFetchText(targetUrl, timeoutMs = 8000, minLength = 100){
+  const attempts = [
+    { url: "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetUrl), json:false },
+    { url: "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(targetUrl), json:false },
+    { url: "https://corsproxy.io/?url=" + encodeURIComponent(targetUrl), json:false },
+    { url: "https://api.allorigins.win/get?url=" + encodeURIComponent(targetUrl), json:true }
+  ];
+
+  let lastError = null;
+  for(const a of attempts){
+    try{
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      const r = await fetch(a.url, { signal: controller.signal });
+      clearTimeout(timer);
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      let text = await r.text();
+      if(a.json){
+        try{ text = (JSON.parse(text) || {}).contents || ""; }catch(e){ text = ""; }
+      }
+      if(text && text.length > minLength) return text;
+      throw new Error("réponse vide");
+    }catch(e){
+      lastError = e;
+      console.warn("[proxy] échec :", e.message);
+    }
+  }
+  throw lastError || new Error("tous les proxys ont échoué");
+}
 
 /* =========================================================
    INIT
@@ -623,6 +726,7 @@ document.addEventListener("DOMContentLoaded", async function(){
   document.getElementById("currentYear").textContent = new Date().getFullYear();
 
   await loadSiteSettings();
+  await loadLiveUrl();
   await loadNews();
   await loadYouTubeVideos();
 
@@ -630,11 +734,8 @@ document.addEventListener("DOMContentLoaded", async function(){
   await startOnlineSession();
 
   setInterval(heartbeatSession, 30000);
-
-  /* Rafraîchit les vidéos toutes les 5 minutes */
   setInterval(() => loadYouTubeVideos(true), YOUTUBE_CACHE_TTL);
 
-  /* Rafraîchit au retour sur l'onglet */
   document.addEventListener("visibilitychange", function(){
     if(!document.hidden){
       loadYouTubeVideos();
@@ -694,6 +795,21 @@ function showLive(){
     const live = document.getElementById("youtubeLiveSection");
     if(live){ live.scrollIntoView({ behavior:"smooth" }); }
   }, 100);
+}
+
+/* =========================================================
+   PLEIN ÉCRAN POUR LE LIVE
+========================================================= */
+
+function goFullscreenLive(){
+  const player = document.querySelector("#youtubeLiveSection .youtube-player");
+  if(!player) return;
+  const el = player;
+  if(el.requestFullscreen) el.requestFullscreen();
+  else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  else if(el.msRequestFullscreen) el.msRequestFullscreen();
+  else if(el.mozRequestFullScreen) el.mozRequestFullScreen();
+  else showNotice("Plein écran non supporté par ce navigateur.");
 }
 
 /* =========================================================
@@ -845,86 +961,233 @@ async function removeHeroImage(){
 }
 
 /* =========================================================
-   YOUTUBE — RÉCUPÉRATION DES VIDÉOS (SANS CLÉ API)
+   LIVE YOUTUBE MANUEL
 ========================================================= */
 
-/* Effectue une requête via une liste de proxys jusqu'à ce qu'un fonctionne */
-async function fetchWithFallbackProxies(targetUrl){
-  let lastError = null;
+function extractYouTubeId(input){
+  if(!input) return "";
+  input = String(input).trim();
+  if(/^[A-Za-z0-9_-]{11}$/.test(input)) return input;
 
-  for(let i = 0; i < CORS_PROXIES.length; i++){
-    const proxied = CORS_PROXIES[i](targetUrl);
-    try{
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 8000);
-
-      const response = await fetch(proxied, {
-        signal: controller.signal,
-        headers: { "Accept": "text/xml, application/xml, text/plain, */*" }
-      });
-
-      clearTimeout(timer);
-
-      if(!response.ok){
-        throw new Error("HTTP " + response.status);
-      }
-
-      const text = await response.text();
-
-      /* Vérifie que la réponse ressemble à du XML YouTube */
-      if(text && (text.indexOf("<feed") !== -1 || text.indexOf("<entry") !== -1)){
-        return text;
-      }
-
-      throw new Error("Réponse non-XML");
-
-    }catch(err){
-      lastError = err;
-      console.warn("Proxy " + (i+1) + " échoué :", err.message);
-      /* Continue vers le proxy suivant */
-    }
-  }
-
-  throw lastError || new Error("Tous les proxys ont échoué");
+  let m;
+  m = input.match(/[?&]v=([A-Za-z0-9_-]{11})/);        if(m) return m[1];
+  m = input.match(/youtu\.be\/([A-Za-z0-9_-]{11})/);   if(m) return m[1];
+  m = input.match(/\/live\/([A-Za-z0-9_-]{11})/);      if(m) return m[1];
+  m = input.match(/\/embed\/([A-Za-z0-9_-]{11})/);     if(m) return m[1];
+  m = input.match(/\/shorts\/([A-Za-z0-9_-]{11})/);    if(m) return m[1];
+  return "";
 }
 
-/* Récupère les vidéos via le flux RSS public YouTube */
-async function fetchYouTubeVideosRSS(){
-  const feedUrl =
-    "https://www.youtube.com/feeds/videos.xml?channel_id=" +
-    encodeURIComponent(YOUTUBE_CHANNEL_ID);
+/* Récupère le vrai titre d'une vidéo YouTube (oEmbed) avec cache */
+async function fetchYouTubeTitle(videoId){
+  if(!videoId) return "";
+  const cacheKey = "cp_live_title_" + videoId;
 
-  const xmlText = await fetchWithFallbackProxies(feedUrl);
+  try{
+    const cached = localStorage.getItem(cacheKey);
+    if(cached) return cached;
+  }catch(e){}
 
-  const xml = new DOMParser().parseFromString(xmlText, "text/xml");
-
-  /* Vérifie erreur de parsing */
-  if(xml.getElementsByTagName("parsererror").length){
-    throw new Error("Erreur de parsing XML");
+  try{
+    const url = "https://www.youtube.com/oembed?url=" +
+      encodeURIComponent("https://www.youtube.com/watch?v=" + videoId) +
+      "&format=json";
+    const text = await proxyFetchText(url, 7000, 20);
+    const data = JSON.parse(text);
+    const title = (data && data.title) ? String(data.title).trim() : "";
+    if(title){
+      try{ localStorage.setItem(cacheKey, title); }catch(e){}
+    }
+    return title;
+  }catch(e){
+    console.warn("[oEmbed] titre indisponible :", e.message);
+    const match = youtubeVideos.find(v => v.id === videoId);
+    return match ? match.title : "";
   }
+}
+
+async function loadLiveUrl(){
+  try{
+    const result = await supabaseClient
+      .from("site_settings").select("value")
+      .eq("key", LIVE_URL_KEY).maybeSingle();
+    if(result.error) throw result.error;
+    const raw = (result.data && result.data.value) ? result.data.value : "";
+    manualLiveId = extractYouTubeId(raw);
+    if(manualLiveId){
+      manualLiveTitle = await fetchYouTubeTitle(manualLiveId);
+      applyManualLive();
+      const input = document.getElementById("liveUrlInput");
+      if(input) input.value = "https://www.youtube.com/watch?v=" + manualLiveId;
+    }
+  }catch(e){
+    console.log("live_youtube_url indisponible :", e.message);
+  }
+}
+
+function applyManualLive(){
+  if(!manualLiveId) return;
+
+  const section = document.getElementById("youtubeLiveSection");
+  const iframe = document.getElementById("liveIframe");
+  const info = document.getElementById("liveInfo");
+  const label = document.getElementById("liveStatusLabel");
+  const fsBtn = document.getElementById("liveFullscreenBtn");
+  const mainTitle = document.getElementById("liveMainTitle");
+
+  if(section) section.classList.add("is-live");
+
+  if(iframe){
+    const src = "https://www.youtube.com/embed/" + manualLiveId
+      + "?rel=0&autoplay=1&mute=0&modestbranding=1";
+    if(iframe.getAttribute("src") !== src) iframe.src = src;
+  }
+  if(info) info.textContent = "🔴 EN DIRECT maintenant sur CAMERA PARTOUT";
+  if(label) label.innerHTML = '<span class="live-dot"></span> EN DIRECT MAINTENANT';
+  if(fsBtn) fsBtn.style.display = "block";
+
+  /* --- Le vrai titre du live, bien en évidence --- */
+  const finalTitle = manualLiveTitle || "CAMERA PARTOUT — EN DIRECT";
+  if(mainTitle) mainTitle.textContent = "🔴 " + finalTitle;
+
+  /* --- Carte du live dans la grille --- */
+  const grid = document.getElementById("youtubeVideosGrid");
+  if(grid){
+    let card = grid.querySelector(".video-card.manual-live");
+    if(!card){
+      card = document.createElement("article");
+      card.className = "video-card manual-live";
+      card.onclick = () => openVideoModal(manualLiveId);
+      card.innerHTML = `
+        <div class="video-thumb">
+          <img src="https://i.ytimg.com/vi/${manualLiveId}/maxresdefault.jpg"
+               onerror="this.src='https://i.ytimg.com/vi/${manualLiveId}/hqdefault.jpg'"
+               alt="Live en cours" loading="lazy">
+          <span class="video-badge">🔴 EN DIRECT</span>
+          <div class="video-play"><span>▶</span></div>
+        </div>
+        <div class="video-card-content">
+          <h3></h3>
+          <p>Cliquez pour regarder le direct maintenant.</p>
+          <div class="video-date">Aujourd'hui</div>
+        </div>`;
+      grid.prepend(card);
+    }
+    const h3 = card.querySelector("h3");
+    if(h3) h3.textContent = "🔴 " + finalTitle;
+    const p = card.querySelector("p");
+    if(p) p.textContent = finalTitle === "CAMERA PARTOUT — EN DIRECT"
+      ? "Cliquez pour regarder le direct maintenant."
+      : "En direct sur CAMERA PARTOUT — cliquez pour regarder.";
+  }
+}
+
+async function saveLiveUrl(){
+  if(!isAdmin){ showNotice("Accès administrateur requis."); return; }
+
+  const input = document.getElementById("liveUrlInput");
+  const msg = document.getElementById("liveUrlMessage");
+  const raw = input ? input.value.trim() : "";
+
+  if(!raw){ if(msg) msg.textContent = "❌ Collez un lien YouTube."; return; }
+
+  const id = extractYouTubeId(raw);
+  if(!id){ if(msg) msg.textContent = "❌ Lien YouTube invalide."; return; }
+
+  if(msg) msg.textContent = "Publication du live...";
+
+  try{
+    const result = await supabaseClient.from("site_settings").upsert({
+      key: LIVE_URL_KEY,
+      value: "https://www.youtube.com/watch?v=" + id,
+      updated_at: new Date().toISOString()
+    }, { onConflict: "key" });
+    if(result.error) throw result.error;
+
+    manualLiveId = id;
+    if(msg) msg.textContent = "Récupération du titre du live...";
+    manualLiveTitle = await fetchYouTubeTitle(id);
+    applyManualLive();
+    if(msg) msg.textContent = "✅ Live publié ! Il est visible sur la page d'accueil.";
+    showNotice("🔴 Live publié !");
+  }catch(e){
+    console.error(e);
+    if(msg) msg.textContent = "❌ Erreur : " + (e.message || "publication impossible");
+  }
+}
+
+async function removeLiveUrl(){
+  if(!isAdmin){ showNotice("Accès administrateur requis."); return; }
+  if(!confirm("Retirer le live de la page d'accueil ?")) return;
+
+  const msg = document.getElementById("liveUrlMessage");
+  try{
+    const result = await supabaseClient.from("site_settings").delete().eq("key", LIVE_URL_KEY);
+    if(result.error) throw result.error;
+
+    manualLiveId = "";
+    manualLiveTitle = "";
+    const input = document.getElementById("liveUrlInput");
+    if(input) input.value = "";
+
+    const mainTitle = document.getElementById("liveMainTitle");
+    if(mainTitle) mainTitle.textContent = "🔴 CAMERA PARTOUT — EN DIRECT";
+
+    const section = document.getElementById("youtubeLiveSection");
+    if(section) section.classList.remove("is-live");
+
+    const iframe = document.getElementById("liveIframe");
+    if(iframe) iframe.src = "";
+
+    const fsBtn = document.getElementById("liveFullscreenBtn");
+    if(fsBtn) fsBtn.style.display = "none";
+
+    const grid = document.getElementById("youtubeVideosGrid");
+    const card = grid ? grid.querySelector(".video-card.manual-live") : null;
+    if(card) card.remove();
+
+    if(msg) msg.textContent = "✅ Live retiré.";
+    showNotice("Live retiré.");
+    await loadYouTubeVideos(true);
+  }catch(e){
+    console.error(e);
+    if(msg) msg.textContent = "❌ Erreur : " + (e.message || "suppression impossible");
+  }
+}
+
+/* =========================================================
+   YOUTUBE — RÉCUPÉRATION DES VIDÉOS (RSS)
+========================================================= */
+
+async function fetchYouTubeVideosRSS(){
+  const feedUrl = "https://www.youtube.com/feeds/videos.xml?channel_id="
+    + encodeURIComponent(YOUTUBE_CHANNEL_ID);
+
+  const xmlText = await proxyFetchText(feedUrl);
+  const xml = new DOMParser().parseFromString(xmlText, "text/xml");
+  if(xml.getElementsByTagName("parsererror").length) throw new Error("XML invalide");
 
   const entries = Array.from(xml.getElementsByTagName("entry"));
+  if(!entries.length) throw new Error("flux RSS vide");
 
   return entries.slice(0, 12).map(function(entry){
-
     function tag(name){
       const el = entry.getElementsByTagName(name)[0];
-      return el ? el.textContent : "";
+      return el ? el.textContent.trim() : "";
     }
-
     const videoId = tag("yt:videoId");
-
-    let thumb = "";
+    let thumb = "", description = "";
     const group = entry.getElementsByTagName("media:group")[0];
     if(group){
       const t = group.getElementsByTagName("media:thumbnail")[0];
-      if(t){ thumb = t.getAttribute("url") || ""; }
+      if(t) thumb = t.getAttribute("url") || "";
+      const d = group.getElementsByTagName("media:description")[0];
+      if(d) description = (d.textContent || "").trim();
     }
-
     return {
       id: videoId,
       title: tag("title") || "Vidéo",
-      description: "",
+      description: description,
       publishedAt: tag("published"),
       thumbnail: thumb || (videoId ? "https://i.ytimg.com/vi/" + videoId + "/hqdefault.jpg" : ""),
       isLive: false,
@@ -933,22 +1196,42 @@ async function fetchYouTubeVideosRSS(){
   }).filter(v => v.id);
 }
 
-/* Charge les vidéos (avec cache + verrouillage) */
+async function fetchYouTubeVideosRss2Json(){
+  const feedUrl = "https://www.youtube.com/feeds/videos.xml?channel_id="
+    + encodeURIComponent(YOUTUBE_CHANNEL_ID);
+  const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(feedUrl);
+  const response = await fetch(api);
+  if(!response.ok) throw new Error("HTTP " + response.status);
+  const data = await response.json();
+  if(data.status !== "ok" || !data.items || !data.items.length){
+    throw new Error("rss2json : aucune vidéo");
+  }
+  return data.items.slice(0, 12).map(function(item){
+    const match = String(item.link || "").match(/[?&]v=([A-Za-z0-9_-]{11})/);
+    const id = match ? match[1] : "";
+    return {
+      id: id,
+      title: item.title || "Vidéo",
+      description: String(item.description || "").replace(/<[^>]*>/g, "").slice(0, 200),
+      publishedAt: item.pubDate,
+      thumbnail: item.thumbnail || (id ? "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg" : ""),
+      isLive: false,
+      isUpcoming: false
+    };
+  }).filter(v => v.id);
+}
+
 async function fetchYouTubeVideos(force){
+  if(youtubeLoading) return youtubeVideos;
 
-  if(youtubeLoading){ return youtubeVideos; }
-
-  if(!force && youtubeVideos.length &&
-     (Date.now() - youtubeFetchedAt) < YOUTUBE_CACHE_TTL){
+  if(!force && youtubeVideos.length && (Date.now() - youtubeFetchedAt) < YOUTUBE_CACHE_TTL){
     return youtubeVideos;
   }
-
-  /* Tente le cache localStorage */
   if(!force){
     try{
       const cached = JSON.parse(localStorage.getItem(YOUTUBE_CACHE_KEY) || "null");
-      if(cached && cached.videos && cached.videos.length &&
-         (Date.now() - cached.time) < YOUTUBE_CACHE_TTL){
+      if(cached && cached.videos && cached.videos.length
+         && (Date.now() - cached.time) < YOUTUBE_CACHE_TTL){
         youtubeVideos = cached.videos;
         youtubeFetchedAt = cached.time;
         return youtubeVideos;
@@ -957,30 +1240,37 @@ async function fetchYouTubeVideos(force){
   }
 
   youtubeLoading = true;
-
   try{
-    const videos = await fetchYouTubeVideosRSS();
+    let videos = [];
 
-    if(videos && videos.length){
+    try{
+      videos = await fetchYouTubeVideosRSS();
+      console.log("[YouTube] RSS OK :", videos.length, "vidéos");
+    }catch(e){
+      console.warn("[YouTube] RSS échoué :", e.message);
+    }
+
+    if(!videos.length){
+      try{
+        videos = await fetchYouTubeVideosRss2Json();
+        console.log("[YouTube] rss2json OK :", videos.length, "vidéos");
+      }catch(e){
+        console.warn("[YouTube] rss2json échoué :", e.message);
+      }
+    }
+
+    if(videos.length){
       youtubeVideos = videos;
       youtubeFetchedAt = Date.now();
       try{
         localStorage.setItem(YOUTUBE_CACHE_KEY, JSON.stringify({
-          time: youtubeFetchedAt,
-          videos: youtubeVideos
+          time: youtubeFetchedAt, videos: youtubeVideos
         }));
       }catch(e){}
       return youtubeVideos;
     }
 
-    /* Si le RSS échoue, garde l'ancien cache s'il existe */
-    if(youtubeVideos.length){ return youtubeVideos; }
-    return [];
-
-  }catch(err){
-    console.warn("YouTube fetch failed:", err.message);
-
-    /* Tente le cache même expiré en dernier recours */
+    if(youtubeVideos.length) return youtubeVideos;
     try{
       const cached = JSON.parse(localStorage.getItem(YOUTUBE_CACHE_KEY) || "null");
       if(cached && cached.videos && cached.videos.length){
@@ -989,30 +1279,27 @@ async function fetchYouTubeVideos(force){
         return youtubeVideos;
       }
     }catch(e){}
-
     return [];
-
   }finally{
     youtubeLoading = false;
   }
 }
 
-/* Recharge forcée (bouton admin) */
 async function forceRefreshYouTube(){
   youtubeVideos = [];
   youtubeFetchedAt = 0;
-  try{
-    localStorage.removeItem(YOUTUBE_CACHE_KEY);
-  }catch(e){}
+  try{ localStorage.removeItem(YOUTUBE_CACHE_KEY); }catch(e){}
   showNotice("Actualisation des vidéos...");
   await loadYouTubeVideos(true);
 }
 
-/* Charge + affiche */
-async function loadYouTubeVideos(force){
+/* =========================================================
+   YOUTUBE — AFFICHAGE
+========================================================= */
 
+async function loadYouTubeVideos(force){
   const grid = document.getElementById("youtubeVideosGrid");
-  if(!grid){ return; }
+  if(!grid) return;
 
   if(!youtubeVideos.length){
     grid.innerHTML = `<div class="video-empty">Chargement des vidéos...</div>`;
@@ -1021,26 +1308,36 @@ async function loadYouTubeVideos(force){
   const videos = await fetchYouTubeVideos(force);
 
   if(!videos || !videos.length){
-    grid.innerHTML = `<div class="video-empty">
-      Aucune vidéo disponible pour le moment.
-    </div>`;
-    /* Met quand même un lecteur de secours sur le live */
-    setDefaultLivePlayer();
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;">
+        <p style="padding:8px 0 12px;font-weight:bold;color:#333;">
+          ▶ Dernières vidéos de la chaîne CAMERA PARTOUT
+        </p>
+        <div style="position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;">
+          <iframe
+            src="https://www.youtube.com/embed/videoseries?list=${YOUTUBE_UPLOADS_PLAYLIST_ID}&rel=0"
+            title="Dernières vidéos CAMERA PARTOUT"
+            style="position:absolute;inset:0;width:100%;height:100%;border:0;"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            allowfullscreen></iframe>
+        </div>
+      </div>`;
+    if(manualLiveId){ applyManualLive(); }
+    else{ setDefaultLivePlayer(); }
     return;
   }
 
   renderYouTubeVideos(videos);
-  updateLiveBanner(videos);
+
+  if(manualLiveId){ applyManualLive(); }
+  else{ setDefaultLivePlayer(); }
 }
 
-/* Affiche la grille */
 function renderYouTubeVideos(videos){
-
   const grid = document.getElementById("youtubeVideosGrid");
-  if(!grid){ return; }
+  if(!grid) return;
 
   grid.innerHTML = videos.map(function(video){
-
     const badge = video.isLive
       ? `<span class="video-badge">🔴 EN DIRECT</span>`
       : video.isUpcoming
@@ -1060,7 +1357,7 @@ function renderYouTubeVideos(videos){
         </div>
         <div class="video-card-content">
           <h3>${escapeHTML(video.title)}</h3>
-          <p>${escapeHTML((video.description || "").slice(0,110))}</p>
+          <p>${escapeHTML((video.description || "").slice(0, 110))}</p>
           <div class="video-date">${formatDate(video.publishedAt)}</div>
         </div>
       </article>
@@ -1068,43 +1365,30 @@ function renderYouTubeVideos(videos){
   }).join("");
 }
 
-/* Met à jour la bannière LIVE en haut */
-function updateLiveBanner(videos){
-
-  const iframe = document.getElementById("liveIframe");
-  const info = document.querySelector("#youtubeLiveSection .youtube-info");
-  const liveTitle = document.querySelector("#youtubeLiveSection .live-title");
-
-  if(!iframe || !videos || !videos.length){ return; }
-
-  const liveVideo = videos.find(v => v.isLive);
-
-  if(liveVideo){
-    const src = "https://www.youtube.com/embed/" + liveVideo.id + "?rel=0";
-    if(iframe.getAttribute("src") !== src){ iframe.src = src; }
-    if(info){ info.textContent = "🔴 En direct : " + liveVideo.title; }
-    if(liveTitle){ liveTitle.innerHTML = '<span class="live-dot"></span> EN DIRECT MAINTENANT'; }
-    return;
-  }
-
-  /* Sinon : affiche la dernière vidéo publiée */
-  const latest = videos[0];
-  const src = "https://www.youtube.com/embed/" + latest.id + "?rel=0";
-  if(iframe.getAttribute("src") !== src){ iframe.src = src; }
-  if(info){ info.textContent = "Dernière vidéo : " + latest.title; }
-  if(liveTitle){ liveTitle.innerHTML = "DERNIÈRE VIDÉO PUBLIÉE"; }
-}
-
-/* Lecteur de secours si RSS échoue complètement */
 function setDefaultLivePlayer(){
+  if(manualLiveId){ applyManualLive(); return; }
+
+  const section = document.getElementById("youtubeLiveSection");
   const iframe = document.getElementById("liveIframe");
-  const info = document.querySelector("#youtubeLiveSection .youtube-info");
-  if(iframe && !iframe.getAttribute("src")){
-    iframe.src = "https://www.youtube.com/embed/live_stream?channel=" + YOUTUBE_CHANNEL_ID;
+  const info = document.getElementById("liveInfo");
+  const label = document.getElementById("liveStatusLabel");
+  const fsBtn = document.getElementById("liveFullscreenBtn");
+  const mainTitle = document.getElementById("liveMainTitle");
+  if(mainTitle) mainTitle.textContent = "🔴 CAMERA PARTOUT — EN DIRECT";
+
+  if(section) section.classList.remove("is-live");
+
+  if(iframe){
+    const src = "https://www.youtube.com/embed/videoseries?list=" + YOUTUBE_UPLOADS_PLAYLIST_ID + "&rel=0";
+    if(iframe.getAttribute("src") !== src) iframe.src = src;
   }
   if(info){
-    info.textContent = "Le direct et les dernières vidéos apparaissent ici dès qu'elles sont disponibles.";
+    info.textContent = "Lecteur de la chaîne CAMERA PARTOUT — le direct s'affichera ici dès que vous le publierez.";
   }
+  if(label){
+    label.innerHTML = '<span class="live-dot"></span> CHAÎNE YOUTUBE';
+  }
+  if(fsBtn) fsBtn.style.display = "none";
 }
 
 /* =========================================================
@@ -1119,7 +1403,15 @@ function openVideoModal(videoId){
 
   const video = youtubeVideos.find(v => v.id === videoId);
   frame.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1&rel=0";
-  if(title){ title.textContent = video ? video.title : ""; }
+  if(title){
+    if(video){
+      title.textContent = video.title;
+    }else if(videoId === manualLiveId){
+      title.textContent = "🔴 " + (manualLiveTitle || "CAMERA PARTOUT — EN DIRECT");
+    }else{
+      title.textContent = "";
+    }
+  }
 
   modal.classList.add("open");
   document.body.style.overflow = "hidden";
@@ -1769,8 +2061,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 });
 
 console.log("CAMERA PARTOUT chargé.");
-console.log("YouTube Channel ID:", YOUTUBE_CHANNEL_ID);
-console.log("Mode YouTube : RSS public (aucune clé API requise)");
+console.log("Live YouTube : Admin → 🔴 Live YouTube → collez le lien → Publier");
 </script>
 
 </body>
