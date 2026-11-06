@@ -431,15 +431,11 @@ footer{background:linear-gradient(90deg,var(--dark),#020914);color:#fff;margin-t
   <div class="container">
     <div class="form-card">
       <h2>🔐 Administration</h2>
-      <p style="margin:10px 0 20px;">Connectez-vous avec votre compte administrateur.</p>
+      <p style="margin:10px 0 20px;">Entrez le code d'accès administrateur.</p>
       <form onsubmit="adminLogin(event)">
         <div class="form-group">
-          <label>Email administrateur</label>
-          <input type="email" id="adminEmail" placeholder="admin@camerapartout.com" required>
-        </div>
-        <div class="form-group">
-          <label>Mot de passe</label>
-          <input type="password" id="adminCode" placeholder="Mot de passe" required>
+          <label>Code d'accès</label>
+          <input type="password" id="adminCode" placeholder="Code d'accès" required autocomplete="off">
         </div>
         <button class="primary-button" type="submit">Connexion</button>
       </form>
@@ -661,6 +657,9 @@ const YOUTUBE_CACHE_TTL = 5 * 60 * 1000;
 const HERO_IMAGE_KEY = "hero_image";
 const LIVE_URL_KEY = "live_youtube_url";
 
+const ADMIN_CODE = "GODISGOOD";
+const ADMIN_SESSION_KEY = "cp_admin_session";
+
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* =========================================================
@@ -746,13 +745,11 @@ document.addEventListener("DOMContentLoaded", async function(){
   const postId = params.get("post");
   if(postId){ await openArticle(postId); }
 
-  try{
-    const { data } = await supabaseClient.auth.getSession();
-    if(data && data.session){
-      isAdmin = true;
-      document.getElementById("adminBar").style.display = "block";
-    }
-  }catch(e){ console.log(e); }
+  /* --- Restauration de session admin (code d'accès) --- */
+  if(sessionStorage.getItem(ADMIN_SESSION_KEY) === "1"){
+    isAdmin = true;
+    document.getElementById("adminBar").style.display = "block";
+  }
 
 });
 
@@ -1694,7 +1691,7 @@ async function subscribeUser(event){
 }
 
 /* =========================================================
-   ADMIN LOGIN
+   ADMIN LOGIN (CODE D'ACCÈS)
 ========================================================= */
 
 function showAdminLogin(){
@@ -1702,31 +1699,28 @@ function showAdminLogin(){
   showPage("adminLoginPage");
 }
 
-async function adminLogin(event){
+function adminLogin(event){
   event.preventDefault();
-  const email = document.getElementById("adminEmail").value.trim();
-  const password = document.getElementById("adminCode").value;
+  const codeInput = document.getElementById("adminCode");
   const message = document.getElementById("adminLoginMessage");
+  const code = codeInput ? codeInput.value.trim() : "";
 
-  message.textContent = "Connexion...";
-
-  try{
-    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if(error){ message.textContent = "❌ " + error.message; return; }
-
+  if(code === ADMIN_CODE){
     isAdmin = true;
+    sessionStorage.setItem(ADMIN_SESSION_KEY, "1");
     document.getElementById("adminBar").style.display = "block";
-    message.textContent = "✅ Connexion réussie.";
-    setTimeout(() => showPage("adminPage"), 500);
-  }catch(e){
-    console.error(e);
-    message.textContent = "❌ Erreur de connexion.";
+    if(message) message.textContent = "✅ Connexion réussie.";
+    if(codeInput) codeInput.value = "";
+    setTimeout(() => showPage("adminPage"), 400);
+  }else{
+    if(message) message.textContent = "❌ Code incorrect.";
+    if(codeInput) codeInput.value = "";
   }
 }
 
-async function logoutAdmin(){
-  try{ await supabaseClient.auth.signOut(); }catch(e){ console.log(e); }
+function logoutAdmin(){
   isAdmin = false;
+  sessionStorage.removeItem(ADMIN_SESSION_KEY);
   document.getElementById("adminBar").style.display = "none";
   showPage("homePage");
   showNotice("Déconnexion réussie.");
@@ -2050,18 +2044,8 @@ window.addEventListener("popstate", function(){
   else{ showPage("homePage"); }
 });
 
-/* =========================================================
-   AUTH STATE
-========================================================= */
-
-supabaseClient.auth.onAuthStateChange((event, session) => {
-  isAdmin = !!session;
-  const bar = document.getElementById("adminBar");
-  if(bar){ bar.style.display = session ? "block" : "none"; }
-});
-
 console.log("CAMERA PARTOUT chargé.");
-console.log("Live YouTube : Admin → 🔴 Live YouTube → collez le lien → Publier");
+console.log("Admin : mot de passe = GODISGOOD");
 </script>
 
 </body>
